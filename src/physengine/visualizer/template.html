@@ -1,0 +1,3215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jigyasa — Scientia Learning | 2D & 3D Interactive Physics Lab (Classes 9–12 / JEE / NEET)</title>
+
+  <!-- Google Fonts & KaTeX -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+  <style>
+    :root {
+      --bg-base: #030712;
+      --bg-surface: #0b1222;
+      --bg-card: rgba(15, 23, 42, 0.75);
+      --bg-card-hover: rgba(30, 41, 59, 0.85);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-glow: rgba(56, 189, 248, 0.3);
+      
+      --cyan: #38bdf8;
+      --blue: #3b82f6;
+      --indigo: #6366f1;
+      --purple: #a855f7;
+      --emerald: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dark: #64748b;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --blur: blur(24px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navbar */
+    #top-nav {
+      height: 56px;
+      background: rgba(11, 18, 34, 0.85);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 30;
+      backdrop-filter: var(--blur);
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 250px;
+    }
+
+    .brand-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: #fff;
+      font-weight: 800;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+    }
+
+    .brand-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .brand-text {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, #ffffff, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-badge {
+      font-size: 9.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+
+    /* 6 Level Tabs in Navbar */
+    .level-nav-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+      padding: 0 8px;
+    }
+
+    .level-tabs {
+      display: flex;
+      gap: 4px;
+      background: rgba(3, 7, 18, 0.6);
+      padding: 3px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .level-tabs::-webkit-scrollbar { display: none; }
+
+    .level-tab {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 7px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .level-tab:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .level-tab.active {
+      background: linear-gradient(135deg, var(--blue), var(--indigo));
+      color: #fff;
+      box-shadow: 0 0 14px rgba(59, 130, 246, 0.45);
+    }
+
+    .nav-tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 240px;
+      justify-content: flex-end;
+    }
+
+    /* 2D / 3D Dimension Switch Group */
+    .dim-switch-group {
+      display: flex;
+      background: rgba(3, 7, 18, 0.75);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .dim-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 10.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .dim-btn:hover { color: #fff; }
+
+    .dim-btn.active {
+      background: rgba(56, 189, 248, 0.16);
+      color: var(--cyan);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+    }
+
+    .pill-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .pill-btn.active {
+      background: rgba(245, 158, 11, 0.12);
+      border-color: var(--amber);
+      color: var(--amber);
+      font-weight: 600;
+    }
+
+    /* Main Container */
+    #workspace {
+      flex: 1;
+      display: flex;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Collapsible Left Sidebar */
+    #left-panel {
+      width: 300px;
+      min-width: 300px;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      z-index: 20;
+      backdrop-filter: var(--blur);
+      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    #left-panel.collapsed {
+      width: 0 !important;
+      min-width: 0 !important;
+      overflow: hidden;
+      border-right: none;
+      pointer-events: none;
+    }
+
+    .panel-header-bar {
+      height: 38px;
+      background: rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+    }
+
+    .panel-header-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-dark);
+    }
+
+    .panel-collapse-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      transition: all 0.15s ease;
+    }
+    .panel-collapse-btn:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+
+    .panel-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+    }
+
+    .section-header {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Presets list */
+    .preset-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .preset-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .preset-item:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(56, 189, 248, 0.3);
+      transform: translateX(2px);
+    }
+
+    .preset-item.active {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: var(--cyan);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+    }
+
+    .preset-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .preset-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .preset-num {
+      font-size: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--cyan);
+      background: rgba(56, 189, 248, 0.1);
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+
+    .preset-info {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      line-height: 1.3;
+    }
+
+    /* Sliders */
+    .param-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .param-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+    }
+
+    .param-val {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--cyan);
+      font-weight: 600;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.12);
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--cyan);
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.8);
+      transition: transform 0.1s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    /* Switch Rows */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 3px 0;
+    }
+
+    .switch-ui {
+      position: relative;
+      width: 30px;
+      height: 16px;
+    }
+
+    .switch-ui input { opacity: 0; width: 0; height: 0; }
+
+    .switch-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(255, 255, 255, 0.12);
+      transition: .2s;
+      border-radius: 16px;
+    }
+
+    .switch-slider:before {
+      position: absolute;
+      content: "";
+      height: 10px;
+      width: 10px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .2s;
+      border-radius: 50%;
+    }
+
+    input:checked + .switch-slider { background-color: var(--cyan); }
+    input:checked + .switch-slider:before { transform: translateX(14px); }
+
+    /* Center Viewport */
+    #viewport {
+      flex: 1;
+      position: relative;
+      background: radial-gradient(circle at 50% 30%, #070e24 0%, #020617 100%);
+      overflow: hidden;
+    }
+
+    #renderCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Floating Reopen Buttons when Panels Collapsed */
+    .float-panel-btn {
+      position: absolute;
+      top: 14px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      gap: 6px;
+      backdrop-filter: var(--blur);
+      z-index: 28;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+      transition: all 0.15s ease;
+    }
+    .float-panel-btn:hover {
+      background: rgba(30, 41, 59, 0.95);
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+    #floatOpenLeft { left: 14px; }
+    #floatOpenRight { right: 14px; }
+
+    /* Auto-Zoom Indicator */
+    #autoZoomIndicator {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      color: var(--cyan);
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 8px;
+      border-radius: 6px;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      backdrop-filter: var(--blur);
+      z-index: 26;
+    }
+
+    /* Bottom Floating Playback Bar */
+    #playback-bar {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-card);
+      backdrop-filter: var(--blur);
+      border: 1px solid var(--border-subtle);
+      border-radius: 30px;
+      padding: 6px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 25;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.8);
+    }
+
+    .round-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      border: none;
+      color: #fff;
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s ease;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    }
+    .round-btn:hover { transform: scale(1.08); }
+
+    .action-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .action-btn:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+
+    .timer-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-main);
+      min-width: 50px;
+    }
+
+    /* Collapsible Right Educational & Math Derivations Panel */
+    #right-panel {
+      width: 340px;
+      min-width: 340px;
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      z-index: 20;
+      backdrop-filter: var(--blur);
+      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    #right-panel.collapsed {
+      width: 0 !important;
+      min-width: 0 !important;
+      overflow: hidden;
+      border-left: none;
+      pointer-events: none;
+    }
+
+    .tab-header {
+      display: flex;
+      border-bottom: 1px solid var(--border-subtle);
+      align-items: center;
+    }
+
+    .tab-header-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-dark);
+      padding: 10px 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tab-header-btn.active {
+      color: var(--cyan);
+      border-bottom: 2px solid var(--cyan);
+      background: rgba(56, 189, 248, 0.05);
+    }
+
+    .tab-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+    }
+
+    .math-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .math-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dark);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .math-val {
+      color: var(--emerald);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+    }
+
+    .katex-box {
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 6px;
+      padding: 8px 10px;
+      border-left: 3px solid var(--cyan);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .katex-box::-webkit-scrollbar { display: none; }
+
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .step-item {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      line-height: 1.45;
+      padding: 5px 8px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    /* Live Energy Bar */
+    .energy-widget {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .energy-bar {
+      height: 8px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .bar-ke { background: linear-gradient(90deg, var(--cyan), var(--blue)); }
+    .bar-pe { background: linear-gradient(90deg, var(--amber), var(--rose)); }
+
+    /* Graph Canvas */
+    .graph-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    canvas.chart-canvas {
+      width: 100%;
+      height: 110px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header id="top-nav">
+    <div class="brand-section">
+      <div class="brand-logo">✨</div>
+      <div class="brand-title-wrap">
+        <div class="brand-text">Jigyasa</div>
+        <div class="brand-badge">A part of Scientia Learning</div>
+      </div>
+    </div>
+
+    <!-- 6 Level Navigation Tabs -->
+    <div class="level-nav-wrapper">
+      <div class="level-tabs">
+        <button class="level-tab active" data-level="1">🌟 L1: Mechanics & Newton</button>
+        <button class="level-tab" data-level="2">🏔️ L2: Friction & Inclines</button>
+        <button class="level-tab" data-level="3">⭕ L3: Circular & Banking</button>
+        <button class="level-tab" data-level="4">⚡ L4: Work, Energy & Power</button>
+        <button class="level-tab" data-level="5">💥 L5: Collisions & Restitution</button>
+        <button class="level-tab" data-level="6">🚀 L6: Projectile Motion</button>
+      </div>
+    </div>
+
+    <div class="nav-tools">
+      <!-- 2D / 3D Mode Toggle -->
+      <div class="dim-switch-group">
+        <button class="dim-btn active" id="btnMode3D">🧊 3D Mode</button>
+        <button class="dim-btn" id="btnMode2D">📐 2D Blueprint</button>
+      </div>
+
+      <span style="font-size: 10px; color: var(--text-dark); margin-left: 4px; margin-right: 2px;">g:</span>
+      <button class="pill-btn active" id="btnG981">9.81</button>
+      <button class="pill-btn" id="btnG1000">10.0</button>
+    </div>
+  </header>
+
+  <!-- Workspace -->
+  <main id="workspace">
+
+    <!-- Left Controls Panel (Collapsible) -->
+    <aside id="left-panel">
+      <div class="panel-header-bar">
+        <span class="panel-header-title">Physics Lab Controls</span>
+        <button class="panel-collapse-btn" id="btnCloseLeft" title="Collapse Controls (Hide Panel)">◀</button>
+      </div>
+
+      <div class="panel-scroll">
+
+        <!-- Scenarios Grid -->
+        <div>
+          <div class="section-header">
+            <span>Curriculum Topics</span>
+            <span id="topicCountBadge" style="color: var(--cyan); font-family: 'JetBrains Mono', monospace;">5 Topics</span>
+          </div>
+          <div class="preset-list" id="presetList"></div>
+        </div>
+
+        <!-- Dynamic Parameters Section -->
+        <div>
+          <div class="section-header">Interactive Parameters</div>
+          <div style="display: flex; flex-direction: column; gap: 7px;">
+
+            <div class="param-box" id="boxForce" style="display: none;">
+              <div class="param-row">
+                <span style="color: var(--text-muted);">Applied Force (F)</span>
+                <span class="param-val" id="textForce">25.0 N</span>
+              </div>
+              <input type="range" id="rangeForce" min="1" max="100" step="1" value="25">
+            </div>
+
+            <div class="param-box" id="boxMass" style="display: none;">
+              <div class="param-row">
+                <span style="color: var(--text-muted);">Mass (m)</span>
+                <span class="param-val" id="textMass">2.0 kg</span>
+              </div>
+              <input type="range" id="rangeMass" min="0.5" max="20" step="0.5" value="2">
+            </div>
+
+            <div class="param-box" id="boxV0">
+              <div class="param-row">
+                <span style="color: var(--text-muted);">Initial Speed (u or v₀)</span>
+                <span class="param-val" id="textV0">30.0 m/s</span>
+              </div>
+              <input type="range" id="rangeV0" min="5" max="80" step="1" value="30">
+            </div>
+
+            <div class="param-box" id="boxAngle">
+              <div class="param-row">
+                <span style="color: var(--text-muted);">Angle (θ)</span>
+                <span class="param-val" id="textAngle">30.0°</span>
+              </div>
+              <input type="range" id="rangeAngle" min="5" max="85" step="1" value="30">
+            </div>
+
+            <div class="param-box" id="boxIncline" style="display: none;">
+              <div class="param-row">
+                <span style="color: var(--text-muted);">Incline Angle (θ)</span>
+                <span class="param-val" id="textIncline">30.0°</span>
+              </div>
+              <input type="range" id="rangeIncline" min="5" max="75" step="1" value="30">
+            </div>
+
+            <div class="param-box" id="boxFriction" style="display: none;">
+              <div class="param-row">
+                <span style="color: var(--text-muted);">Friction Coeff (μ)</span>
+                <span class="param-val" id="textFriction">0.30</span>
+              </div>
+              <input type="range" id="rangeFriction" min="0.0" max="0.9" step="0.05" value="0.30">
+            </div>
+
+            <div class="param-box" id="boxRadius" style="display: none;">
+              <div class="param-row">
+                <span style="color: var(--text-muted);">Radius (r)</span>
+                <span class="param-val" id="textRadius">6.0 m</span>
+              </div>
+              <input type="range" id="rangeRadius" min="2" max="25" step="0.5" value="6">
+            </div>
+
+            <div class="param-box" id="boxSpring" style="display: none;">
+              <div class="param-row">
+                <span style="color: var(--text-muted);">Spring Constant (k)</span>
+                <span class="param-val" id="textSpring">20.0 N/m</span>
+              </div>
+              <input type="range" id="rangeSpring" min="5" max="100" step="1" value="20">
+            </div>
+
+            <div class="param-box" id="boxRestitution" style="display: none;">
+              <div class="param-row">
+                <span style="color: var(--text-muted);">Restitution (e)</span>
+                <span class="param-val" id="textRestitution">0.80</span>
+              </div>
+              <input type="range" id="rangeRestitution" min="0.0" max="1.0" step="0.05" value="0.80">
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Overlays -->
+        <div>
+          <div class="section-header">Classroom Overlays</div>
+          <div style="display: flex; flex-direction: column; gap: 3px;">
+            <div class="toggle-row">
+              <span>Velocity Vector (v)</span>
+              <label class="switch-ui"><input type="checkbox" id="chkVel" checked><span class="switch-slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <span>Components (v_x, v_y)</span>
+              <label class="switch-ui"><input type="checkbox" id="chkComp" checked><span class="switch-slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <span>Forces & Normal (F, N, mg)</span>
+              <label class="switch-ui"><input type="checkbox" id="chkForce" checked><span class="switch-slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <span>Trajectory Trail</span>
+              <label class="switch-ui"><input type="checkbox" id="chkTrail" checked><span class="switch-slider"></span></label>
+            </div>
+            <div class="toggle-row">
+              <span>Smooth Auto-Framing</span>
+              <label class="switch-ui"><input type="checkbox" id="chkAutoFraming" checked><span class="switch-slider"></span></label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- Center Viewport -->
+    <section id="viewport">
+      <canvas id="renderCanvas"></canvas>
+
+      <!-- Floating Reopen Buttons -->
+      <button class="float-panel-btn" id="floatOpenLeft">🎛️ Parameters & Topics</button>
+      <button class="float-panel-btn" id="floatOpenRight">📐 Math & Derivations</button>
+
+      <div id="autoZoomIndicator">🔍 3D Volumetric Mode</div>
+
+      <!-- Playback Bar -->
+      <div id="playback-bar">
+        <button class="action-btn" id="btnReset">↺ Reset</button>
+        <button class="round-btn" id="btnPlay">⏸</button>
+        <button class="action-btn" id="btnApex">🎯 Apex / Key Event</button>
+
+        <div style="width: 120px; display: flex; align-items: center;">
+          <input type="range" id="scrubber" min="0" max="100" step="0.1" value="0">
+        </div>
+
+        <span class="timer-text" id="timeReadout">0.00s</span>
+
+        <select id="speedDropdown" style="background: rgba(255,255,255,0.08); border: 1px solid var(--border-subtle); color: #fff; padding: 3px 6px; border-radius: 6px; font-size: 11px; outline: none;">
+          <option value="0.25">0.25×</option>
+          <option value="0.5">0.5×</option>
+          <option value="1.0" selected>1.0×</option>
+          <option value="2.0">2.0×</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Right Math Derivations Panel (Collapsible) -->
+    <aside id="right-panel">
+      <div class="panel-header-bar" style="border-left: 1px solid var(--border-subtle);">
+        <span class="panel-header-title">Derivations & Notes</span>
+        <button class="panel-collapse-btn" id="btnCloseRight" title="Collapse Derivations (Hide Panel)">▶</button>
+      </div>
+
+      <div class="tab-header">
+        <button class="tab-header-btn active" id="btnTabMath">📐 Math Proof</button>
+        <button class="tab-header-btn" id="btnTabGraphs">📈 Graphs</button>
+        <button class="tab-header-btn" id="btnTabConcepts">💡 NCERT Notes</button>
+      </div>
+
+      <!-- Math Tab -->
+      <div class="tab-body" id="bodyTabMath">
+        <div id="mathCardsContainer"></div>
+
+        <!-- Live Telemetry -->
+        <div class="math-card">
+          <div class="math-title">
+            <span>Instantaneous Speed</span>
+            <span class="math-val" id="liveSpeed">0.00 m/s</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 11px; font-family: 'JetBrains Mono', monospace; margin-top: 3px;">
+            <span style="color: var(--cyan);" id="liveVx">v_x = 0.00 m/s</span>
+            <span style="color: var(--emerald);" id="liveVy">v_y = 0.00 m/s</span>
+          </div>
+        </div>
+
+        <!-- Energy Bar -->
+        <div class="energy-widget">
+          <div style="display: flex; justify-content: space-between; font-size: 10px;">
+            <span style="color: var(--cyan);">KE: <b id="textKE">0.0 J</b></span>
+            <span style="color: var(--amber);">PE: <b id="textPE">0.0 J</b></span>
+          </div>
+          <div class="energy-bar">
+            <div class="bar-ke" id="barKE" style="width: 50%;"></div>
+            <div class="bar-pe" id="barPE" style="width: 50%;"></div>
+          </div>
+          <div style="font-size: 9px; color: var(--text-dark); text-align: right;">Conservation of Total Mechanical Energy</div>
+        </div>
+      </div>
+
+      <!-- Graphs Tab -->
+      <div class="tab-body" id="bodyTabGraphs" style="display: none;">
+        <div class="graph-card">
+          <div class="math-title" id="graph1Title">Position vs Time [ y(t) or x(t) ]</div>
+          <canvas class="chart-canvas" id="chartHeight"></canvas>
+        </div>
+        <div class="graph-card">
+          <div class="math-title" id="graph2Title">Velocity / Force Curve [ v(t) or F(x) ]</div>
+          <canvas class="chart-canvas" id="chartVelocity"></canvas>
+        </div>
+      </div>
+
+      <!-- Concepts Tab -->
+      <div class="tab-body" id="bodyTabConcepts" style="display: none;">
+        <div class="math-card">
+          <div class="math-title">🎯 Physics Exam & Competitive Concepts</div>
+          <div id="conceptText" style="font-size: 11.5px; line-height: 1.55; color: var(--text-muted);"></div>
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <script>
+    // ── Complete 40-Topic Curriculum Definition Across 6 Levels ────────
+    const CURRICULUM = {
+      1: [
+        { id: "newton_second_law", title: "1. Newton's 2nd Law", desc: "F = dp/dt = ma (Track with pulling weight & timer)" },
+        { id: "impulse_momentum", title: "2. Impulse–Momentum", desc: "J = ∫F dt = Δp (Wall sensor impact & F-t curve)" },
+        { id: "momentum_conservation", title: "3. Momentum Conservation", desc: "p₁ + p₂ = const (Two carts colliding on rail)" },
+        { id: "equations_of_motion", title: "4. Four Equations of Motion", desc: "v=u+at, s=ut+½at², v²=u²+2as, s=(u+v)t/2" },
+        { id: "newton_third_law", title: "5. Newton's 3rd Law", desc: "F₁₂ = -F₂₁ (Action-Reaction dynamic pair)" },
+      ],
+      2: [
+        { id: "static_friction", title: "6. Limiting Static Friction", desc: "f_s ≤ f_max = μ_s N (Applied force ramp & break-away)" },
+        { id: "kinetic_friction", title: "7. Kinetic Friction", desc: "f_k = μ_k N (Sliding block with friction skid marks)" },
+        { id: "angle_of_friction", title: "8. Angle of Friction", desc: "tan λ = μ (Resultant contact force vector R)" },
+        { id: "angle_of_repose", title: "9. Angle of Repose", desc: "tan θ = μ ⇒ θ = λ (Incline rotating upwards until slip)" },
+        { id: "incline_acceleration", title: "10. Incline Acceleration", desc: "a = g(sinθ - μ cosθ) down plane" },
+        { id: "pull_horizontal", title: "11. Pulled Horizontally", desc: "a = (F - μ mg)/m on rough floor" },
+        { id: "pull_angle", title: "12. Pulled at an Angle", desc: "a = [F cosθ - μ(mg - F sinθ)] / m (Normal reduction)" },
+        { id: "min_pull_force", title: "13. Minimum Pulling Force", desc: "F_min = μ mg / √(1 + μ²)" },
+        { id: "optimum_pull_angle", title: "14. Optimum Pull Angle", desc: "θ_opt = tan⁻¹μ = λ (least effort angle)" },
+      ],
+      3: [
+        { id: "centripetal_force", title: "15. Centripetal Force", desc: "F_c = m v² / r = m ω² r (Tethered orbit)" },
+        { id: "banking_no_friction", title: "16. Banking (Frictionless)", desc: "tan θ = v²/rg ⇒ v = √(rg tanθ)" },
+        { id: "banking_with_friction", title: "17. Banking with Friction", desc: "Safe speed envelope: [v_min, v_max]" },
+        { id: "vertical_circle_tension", title: "18. Vertical Circle Tension", desc: "T_bot = mg + mv²/r, T_top = mv²/r - mg" },
+        { id: "vertical_circle_critical", title: "19. Critical Loop Speed", desc: "v_bot = √(5gr) loop completion test" },
+      ],
+      4: [
+        { id: "work_constant_force", title: "20. Constant Force Work", desc: "W = F·s = F s cosθ (Crate displacement meter)" },
+        { id: "work_variable_force", title: "21. Variable Force Work", desc: "W = ∫F(x) dx (Live shaded area under F-x)" },
+        { id: "work_energy_theorem", title: "22. Work–Energy Theorem", desc: "W_net = ΔK = ½mv² - ½mu²" },
+        { id: "kinetic_energy", title: "23. Kinetic Energy", desc: "K = ½ m v² derivation" },
+        { id: "gravitational_pe", title: "24. Gravitational PE", desc: "U = mgh in uniform gravity" },
+        { id: "mechanical_energy_conservation", title: "25. Energy Conservation", desc: "Roller coaster track: PE ↔ KE transfer" },
+        { id: "spring_pe", title: "26. Spring Potential Energy", desc: "U = ½ k x² (Coiled spring oscillation)" },
+        { id: "spring_work", title: "27. Spring Work Done", desc: "W = -½ k (x₂² - x₁²)" },
+        { id: "power", title: "28. Mechanical Power", desc: "P = dW/dt = F·v = F v cosθ" },
+      ],
+      5: [
+        { id: "elastic_collision_1d", title: "29. 1D Elastic Collision", desc: "Velocity exchange & zero KE dissipation" },
+        { id: "coefficient_of_restitution", title: "30. Restitution Coeff (e)", desc: "e = (v₂ - v₁) / (u₁ - u₂)" },
+        { id: "perfectly_inelastic", title: "31. Inelastic Collision", desc: "Velcro carts locking together: v_common" },
+        { id: "kinetic_energy_loss", title: "32. KE Loss in Collision", desc: "ΔK = ½ [m₁m₂/(m₁+m₂)](u₁-u₂)²" },
+        { id: "wall_collision", title: "33. Collision with Wall", desc: "v = -e u rebound off barrier" },
+      ],
+      6: [
+        { id: "projectile_range", title: "34. Horizontal Range (R)", desc: "R = u² sin(2θ) / g with range measurement caliper" },
+        { id: "projectile_max_height", title: "35. Maximum Height (H)", desc: "H_max = u² sin²θ / (2g) with apex flag" },
+        { id: "projectile_time_of_flight", title: "36. Time of Flight (T)", desc: "T = 2u sinθ / g with flight stopwatch" },
+        { id: "projectile_trajectory", title: "37. Parabolic Trajectory", desc: "y = x tanθ - g x² / (2 u² cos²θ) overlaid curve" },
+        { id: "projectile_max_range", title: "38. Max Range (θ = 45°)", desc: "Multi-angle ghost curves (15°, 30°, 45°, 60°, 75°)" },
+        { id: "projectile_complementary", title: "39. Complementary Angles", desc: "Dual simultaneous launch (θ & 90°-θ) hitting same target!" },
+      ]
+    };
+
+    let activeLevel = 1;
+    let activeTopicId = "newton_second_law";
+    let renderDimension = "3d";
+    let simSnapshots = [];
+    let simDuration = 5.0;
+    let currentFrame = 0;
+    let isPlaying = true;
+    let playSpeed = 1.0;
+    let g = 9.81;
+
+    const camera = {
+      scale: 14,
+      offsetX: 100,
+      offsetY: 480,
+      targetScale: 14,
+      targetOffsetX: 100,
+      targetOffsetY: 480,
+    };
+
+    const canvas = document.getElementById("renderCanvas");
+    const ctx = canvas.getContext("2d");
+
+    function resizeCanvas() {
+      const container = document.getElementById("viewport");
+      canvas.width = container.clientWidth * window.devicePixelRatio;
+      canvas.height = container.clientHeight * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener("resize", () => {
+      resizeCanvas();
+      recalcAutoFraming(true);
+    });
+    resizeCanvas();
+
+    // ── Panel Collapse / Expand Controls ──────────────────────────────
+    const leftPanel = document.getElementById("left-panel");
+    const rightPanel = document.getElementById("right-panel");
+    const btnCloseLeft = document.getElementById("btnCloseLeft");
+    const btnCloseRight = document.getElementById("btnCloseRight");
+    const floatOpenLeft = document.getElementById("floatOpenLeft");
+    const floatOpenRight = document.getElementById("floatOpenRight");
+
+    function toggleLeftPanel(collapse) {
+      if (collapse) {
+        leftPanel.classList.add("collapsed");
+        floatOpenLeft.style.display = "flex";
+      } else {
+        leftPanel.classList.remove("collapsed");
+        floatOpenLeft.style.display = "none";
+      }
+      setTimeout(() => { resizeCanvas(); recalcAutoFraming(true); }, 260);
+    }
+
+    function toggleRightPanel(collapse) {
+      if (collapse) {
+        rightPanel.classList.add("collapsed");
+        floatOpenRight.style.display = "flex";
+      } else {
+        rightPanel.classList.remove("collapsed");
+        floatOpenRight.style.display = "none";
+      }
+      setTimeout(() => { resizeCanvas(); recalcAutoFraming(true); }, 260);
+    }
+
+    btnCloseLeft.addEventListener("click", () => toggleLeftPanel(true));
+    floatOpenLeft.addEventListener("click", () => toggleLeftPanel(false));
+    btnCloseRight.addEventListener("click", () => toggleRightPanel(true));
+    floatOpenRight.addEventListener("click", () => toggleRightPanel(false));
+
+    // Keyboard Shortcuts: [ and ] to toggle sidebars
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "[") toggleLeftPanel(!leftPanel.classList.contains("collapsed"));
+      if (e.key === "]") toggleRightPanel(!rightPanel.classList.contains("collapsed"));
+    });
+
+    // ── 2D / 3D Dimension Toggle Listeners ─────────────────────────────
+    document.getElementById("btnMode3D").addEventListener("click", () => {
+      document.getElementById("btnMode3D").classList.add("active");
+      document.getElementById("btnMode2D").classList.remove("active");
+      renderDimension = "3d";
+      document.getElementById("autoZoomIndicator").textContent = "🔍 3D Volumetric Mode";
+    });
+
+    document.getElementById("btnMode2D").addEventListener("click", () => {
+      document.getElementById("btnMode2D").classList.add("active");
+      document.getElementById("btnMode3D").classList.remove("active");
+      renderDimension = "2d";
+      document.getElementById("autoZoomIndicator").textContent = "📐 2D Blueprint Mode";
+    });
+
+    // ── Level Selector ────────────────────────────────────────────────
+    document.querySelectorAll(".level-tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".level-tab").forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        activeLevel = parseInt(tab.dataset.level);
+        renderPresetList();
+        selectTopic(CURRICULUM[activeLevel][0].id);
+      });
+    });
+
+    function renderPresetList() {
+      const list = document.getElementById("presetList");
+      list.innerHTML = "";
+      const topics = CURRICULUM[activeLevel];
+      document.getElementById("topicCountBadge").textContent = `${topics.length} Topics`;
+
+      topics.forEach((p, idx) => {
+        const item = document.createElement("div");
+        item.className = `preset-item ${p.id === activeTopicId ? "active" : ""}`;
+        item.innerHTML = `
+          <div class="preset-title-row">
+            <span class="preset-name">${p.title}</span>
+            <span class="preset-num">#${idx + 1}</span>
+          </div>
+          <div class="preset-info">${p.desc}</div>
+        `;
+        item.addEventListener("click", () => selectTopic(p.id));
+        list.appendChild(item);
+      });
+    }
+
+    function selectTopic(topicId) {
+      activeTopicId = topicId;
+      renderPresetList();
+      updateVisibleSliders();
+      computeInstantPhysics();
+      recalcAutoFraming(true);
+      currentFrame = 0;
+      isPlaying = true;
+      document.getElementById("btnPlay").textContent = "⏸";
+    }
+
+    function updateVisibleSliders() {
+      const boxes = {
+        force: document.getElementById("boxForce"),
+        mass: document.getElementById("boxMass"),
+        v0: document.getElementById("boxV0"),
+        angle: document.getElementById("boxAngle"),
+        incline: document.getElementById("boxIncline"),
+        friction: document.getElementById("boxFriction"),
+        radius: document.getElementById("boxRadius"),
+        spring: document.getElementById("boxSpring"),
+        restitution: document.getElementById("boxRestitution"),
+      };
+      Object.values(boxes).forEach(b => b.style.display = "none");
+
+      if (activeTopicId.includes("newton") || activeTopicId.includes("impulse") || activeTopicId.includes("equations")) {
+        boxes.force.style.display = "flex";
+        boxes.mass.style.display = "flex";
+        boxes.v0.style.display = "flex";
+      } else if (activeTopicId.includes("friction") || activeTopicId.includes("repose") || activeTopicId.includes("pull") || activeTopicId.includes("incline")) {
+        boxes.mass.style.display = "flex";
+        boxes.friction.style.display = "flex";
+        if (activeTopicId.includes("incline") || activeTopicId.includes("repose")) boxes.incline.style.display = "flex";
+        if (activeTopicId.includes("pull")) { boxes.force.style.display = "flex"; boxes.angle.style.display = "flex"; }
+      } else if (activeTopicId.includes("banking") || activeTopicId.includes("centripetal") || activeTopicId.includes("vertical_circle")) {
+        boxes.radius.style.display = "flex";
+        boxes.v0.style.display = "flex";
+        if (activeTopicId.includes("banking")) { boxes.angle.style.display = "flex"; boxes.friction.style.display = "flex"; }
+      } else if (activeTopicId.includes("spring")) {
+        boxes.spring.style.display = "flex";
+        boxes.mass.style.display = "flex";
+      } else if (activeTopicId.includes("collision") || activeTopicId.includes("restitution")) {
+        boxes.v0.style.display = "flex";
+        boxes.restitution.style.display = "flex";
+      } else if (activeTopicId.includes("projectile")) {
+        boxes.v0.style.display = "flex";
+        boxes.angle.style.display = "flex";
+      } else {
+        boxes.v0.style.display = "flex";
+        boxes.mass.style.display = "flex";
+      }
+    }
+
+    // Sliders
+    const rForce = document.getElementById("rangeForce");
+    const rMass = document.getElementById("rangeMass");
+    const rV0 = document.getElementById("rangeV0");
+    const rAngle = document.getElementById("rangeAngle");
+    const rIncline = document.getElementById("rangeIncline");
+    const rFriction = document.getElementById("rangeFriction");
+    const rRadius = document.getElementById("rangeRadius");
+    const rSpring = document.getElementById("rangeSpring");
+    const rRestitution = document.getElementById("rangeRestitution");
+
+    function bindSlider(slider, textEl, unit, stepDecimals) {
+      slider.addEventListener("input", (e) => {
+        textEl.textContent = `${parseFloat(e.target.value).toFixed(stepDecimals)} ${unit}`;
+        computeInstantPhysics();
+        recalcAutoFraming(false);
+      });
+    }
+
+    bindSlider(rForce, document.getElementById("textForce"), "N", 1);
+    bindSlider(rMass, document.getElementById("textMass"), "kg", 1);
+    bindSlider(rV0, document.getElementById("textV0"), "m/s", 1);
+    bindSlider(rAngle, document.getElementById("textAngle"), "°", 1);
+    bindSlider(rIncline, document.getElementById("textIncline"), "°", 1);
+    bindSlider(rFriction, document.getElementById("textFriction"), "", 2);
+    bindSlider(rRadius, document.getElementById("textRadius"), "m", 1);
+    bindSlider(rSpring, document.getElementById("textSpring"), "N/m", 1);
+    bindSlider(rRestitution, document.getElementById("textRestitution"), "", 2);
+
+    document.getElementById("btnG981").addEventListener("click", () => {
+      document.getElementById("btnG981").classList.add("active");
+      document.getElementById("btnG1000").classList.remove("active");
+      g = 9.81;
+      computeInstantPhysics();
+      recalcAutoFraming(false);
+    });
+    document.getElementById("btnG1000").addEventListener("click", () => {
+      document.getElementById("btnG1000").classList.add("active");
+      document.getElementById("btnG981").classList.remove("active");
+      g = 10.0;
+      computeInstantPhysics();
+      recalcAutoFraming(false);
+    });
+
+    // ── Instant 60 FPS Physics Simulation Engine for all 40 Topics ────
+    function computeInstantPhysics() {
+      const F = parseFloat(rForce.value);
+      const m = parseFloat(rMass.value);
+      const u = parseFloat(rV0.value);
+      const thDeg = parseFloat(rAngle.value);
+      const thRad = thDeg * Math.PI / 180;
+      const incDeg = parseFloat(rIncline.value);
+      const incRad = incDeg * Math.PI / 180;
+      const mu = parseFloat(rFriction.value);
+      const r_circ = parseFloat(rRadius.value);
+      const k = parseFloat(rSpring.value);
+      const e_rest = parseFloat(rRestitution.value);
+
+      simSnapshots = [];
+      const dt = 0.01;
+
+      // ── Level 1: Mechanics & Newton ──
+      if (activeTopicId === "newton_second_law" || activeTopicId === "equations_of_motion") {
+        const a_val = F / m;
+        simDuration = 4.0;
+        const totalSteps = Math.ceil(simDuration / dt);
+
+        for (let i = 0; i <= totalSteps; i++) {
+          const t = i * dt;
+          const x = u * t + 0.5 * a_val * t * t;
+          const vx = u + a_val * t;
+          simSnapshots.push({
+            t, entities: {
+              body: { name: "accelerating_block", x, y: 0, vx, vy: 0, ax: a_val, ay: 0, speed: vx, ke: 0.5 * m * vx * vx }
+            }
+          });
+        }
+      } else if (activeTopicId === "impulse_momentum") {
+        simDuration = 3.5;
+        const totalSteps = Math.ceil(simDuration / dt);
+        const t_wall = 1.5;
+        const pulse_w = 0.25;
+        const wall_x = 12.0;
+
+        for (let i = 0; i <= totalSteps; i++) {
+          const t = i * dt;
+          let x, vx, f_p = 0;
+          if (t < t_wall) {
+            x = -15 + (wall_x + 15) * (t / t_wall);
+            vx = u;
+          } else if (t <= t_wall + pulse_w) {
+            const prog = (t - t_wall) / pulse_w;
+            x = wall_x;
+            f_p = (2 * m * u / pulse_w) * Math.sin(prog * Math.PI);
+            vx = u * (1 - 2 * prog);
+          } else {
+            const dt_after = t - (t_wall + pulse_w);
+            x = wall_x - u * dt_after;
+            vx = -u;
+          }
+          simSnapshots.push({
+            t, f_pulse: f_p, wall_hit: t >= t_wall && t <= t_wall + pulse_w, entities: {
+              ball: { name: "elastic_ball", x, y: 0, vx, vy: 0, ax: -f_p / m, ay: 0, speed: Math.abs(vx), ke: 0.5 * m * vx * vx }
+            }
+          });
+        }
+      } else if (activeTopicId === "momentum_conservation" || activeTopicId === "newton_third_law") {
+        const m1 = m, m2 = m * 1.5;
+        const u1 = u * 0.7, u2 = -u * 0.4;
+        const v1 = (m1 * u1 + m2 * u2 - m2 * e_rest * (u1 - u2)) / (m1 + m2);
+        const v2 = (m1 * u1 + m2 * u2 + m1 * e_rest * (u1 - u2)) / (m1 + m2);
+        simDuration = 4.0;
+        const totalSteps = Math.ceil(simDuration / dt);
+        const t_col = 1.6;
+
+        for (let i = 0; i <= totalSteps; i++) {
+          const t = i * dt;
+          let x1, x2, vx1, vx2;
+          if (t <= t_col) {
+            x1 = -16 + u1 * t;
+            x2 = 14 + u2 * t;
+            vx1 = u1; vx2 = u2;
+          } else {
+            const dt_a = t - t_col;
+            x1 = (-16 + u1 * t_col) + v1 * dt_a;
+            x2 = (14 + u2 * t_col) + v2 * dt_a;
+            vx1 = v1; vx2 = v2;
+          }
+          simSnapshots.push({
+            t, entities: {
+              cart1: { name: `Cart 1 (${m1.toFixed(1)}kg)`, x: x1, y: 0, vx: vx1, vy: 0, ax: 0, ay: 0, speed: Math.abs(vx1), ke: 0.5 * m1 * vx1 * vx1 },
+              cart2: { name: `Cart 2 (${m2.toFixed(1)}kg)`, x: x2, y: 0, vx: vx2, vy: 0, ax: 0, ay: 0, speed: Math.abs(vx2), ke: 0.5 * m2 * vx2 * vx2 },
+            }
+          });
+        }
+
+      // ── Level 2: Friction & Inclines ──
+      } else if (activeTopicId === "static_friction" || activeTopicId === "kinetic_friction" || activeTopicId === "angle_of_friction") {
+        const f_max = mu * m * g;
+        simDuration = 5.0;
+        const totalSteps = Math.ceil(simDuration / dt);
+
+        for (let i = 0; i <= totalSteps; i++) {
+          const t = i * dt;
+          const f_app = (t / 2.5) * (f_max * 1.5);
+          const isSlipping = f_app > f_max;
+          const a_now = isSlipping ? (f_app - 0.8 * f_max) / m : 0;
+          const x = isSlipping ? 0.5 * a_now * (t - 2.5) ** 2 : 0;
+          const vx = isSlipping ? a_now * (t - 2.5) : 0;
+
+          simSnapshots.push({
+            t, f_applied: f_app, f_friction: isSlipping ? 0.8 * f_max : f_app, isSlipping, f_max, entities: {
+              block: { name: "friction_block", x, y: 0, vx, vy: 0, ax: a_now, ay: 0, speed: vx, ke: 0.5 * m * vx * vx }
+            }
+          });
+        }
+      } else if (activeTopicId === "angle_of_repose") {
+        const theta_repose = Math.atan(mu);
+        simDuration = 6.0;
+        const totalSteps = Math.ceil(simDuration / dt);
+        const rampLen = 22.0;
+        const s0 = 2.5;
+
+        for (let i = 0; i <= totalSteps; i++) {
+          const t = i * dt;
+          const currentInc = Math.min(45 * Math.PI / 180, (t / 5.0) * (45 * Math.PI / 180));
+          const hasSlipped = currentInc > theta_repose;
+          const t_slip = (theta_repose / (45 * Math.PI / 180)) * 5.0;
+          const a_slip = hasSlipped ? g * (Math.sin(currentInc) - mu * Math.cos(currentInc)) : 0;
+          const s_travel = hasSlipped ? 0.5 * a_slip * (t - t_slip) ** 2 : 0;
+          const s_curr = Math.min(rampLen, s0 + s_travel);
+
+          const x = s_curr * Math.cos(currentInc);
+          const y = (rampLen - s_curr) * Math.sin(currentInc);
+          const v_curr = hasSlipped ? a_slip * (t - t_slip) : 0;
+
+          simSnapshots.push({
+            t, currentInc, hasSlipped, theta_repose, rampLen, inclineAngle: currentInc, entities: {
+              block: { 
+                name: hasSlipped ? "Slipping Down Incline" : "Static (f_s balances mg sin θ)", 
+                x, y, 
+                vx: v_curr * Math.cos(currentInc), 
+                vy: -v_curr * Math.sin(currentInc), 
+                ax: a_slip * Math.cos(currentInc), 
+                ay: -a_slip * Math.sin(currentInc), 
+                speed: v_curr, 
+                ke: 0.5 * m * v_curr * v_curr,
+                inclineAngle: currentInc
+              }
+            }
+          });
+        }
+      } else if (activeTopicId === "incline_acceleration") {
+        const a_inc = Math.max(0, g * (Math.sin(incRad) - mu * Math.cos(incRad)));
+        const rampLen = 22.0;
+        const s0 = 2.5;
+        simDuration = 5.0;
+        const totalSteps = Math.ceil(simDuration / dt);
+
+        for (let i = 0; i <= totalSteps; i++) {
+          const t = i * dt;
+          const s_travel = 0.5 * a_inc * t * t;
+          const s_curr = Math.min(rampLen, s0 + s_travel);
+          const x = s_curr * Math.cos(incRad);
+          const y = (rampLen - s_curr) * Math.sin(incRad);
+          const v_mag = a_inc * t;
+
+          simSnapshots.push({
+            t, currentInc: incRad, rampLen, inclineAngle: incRad, entities: {
+              block: { 
+                name: "Accelerating Block", 
+                x, y, 
+                vx: v_mag * Math.cos(incRad), 
+                vy: -v_mag * Math.sin(incRad), 
+                ax: a_inc * Math.cos(incRad), 
+                ay: -a_inc * Math.sin(incRad), 
+                speed: v_mag, 
+                ke: 0.5 * m * v_mag * v_mag,
+                inclineAngle: incRad
+              }
+            }
+          });
+        }
+      } else if (activeTopicId === "pull_horizontal" || activeTopicId === "pull_angle" || activeTopicId === "min_pull_force" || activeTopicId === "optimum_pull_angle") {
+        const pullTh = (activeTopicId === "pull_horizontal") ? 0 : (activeTopicId.includes("optimum") || activeTopicId === "min_pull_force") ? Math.atan(mu) : thRad;
+        const N_eff = Math.max(0, m * g - F * Math.sin(pullTh));
+        const f_friction = mu * N_eff;
+        const F_net_h = F * Math.cos(pullTh) - f_friction;
+        const a_h = Math.max(0, F_net_h / m);
+        simDuration = 4.0;
+        const totalSteps = Math.ceil(simDuration / dt);
+
+        for (let i = 0; i <= totalSteps; i++) {
+          const t = i * dt;
+          const x = 0.5 * a_h * t * t;
+          const vx = a_h * t;
+          simSnapshots.push({
+            t, pullAngle: pullTh, N_eff, f_friction, entities: {
+              block: { name: "pulled_block", x, y: 0, vx, vy: 0, ax: a_h, ay: 0, speed: vx, ke: 0.5 * m * vx * vx }
+            }
+          });
+        }
+
+      // ── Level 3: Circular & Banking ──
+      } else if (activeTopicId === "centripetal_force") {
+        const omega = u / r_circ;
+        simDuration = 10.0;
+        const totalSteps = Math.ceil(simDuration / dt);
+
+        for (let i = 0; i <= totalSteps; i++) {
+          const t = i * dt;
+          const angle = omega * t;
+          const x = r_circ * Math.cos(angle);
+          const y = r_circ * Math.sin(angle);
+          const vx = -u * Math.sin(angle);
+          const vy = u * Math.cos(angle);
+          simSnapshots.push({
+            t, radius: r_circ, tension: (m * u * u) / r_circ, entities: {
+              tether_bob: { name: `Tethered Bob (${m.toFixed(1)}kg)`, x, y, vx, vy, ax: -omega * omega * x, ay: -omega * omega * y, speed: u, ke: 0.5 * m * u * u }
+            }
+          });
+        }
+      } else if (activeTopicId === "banking_no_friction") {
+        const theta_bank = incRad;
+        const v_opt = Math.sqrt(r_circ * g * Math.tan(theta_bank));
+        const omega = u / r_circ;
+        simDuration = 10.0;
+        const totalSteps = Math.ceil(simDuration / dt);
+        const N_force = (m * g) / Math.cos(theta_bank);
+
+        for (let i = 0; i <= totalSteps; i++) {
+          const t = i * dt;
+          const angle = omega * t;
+          const x = r_circ * Math.cos(angle);
+          const y = r_circ * Math.sin(angle);
+          const vx = -u * Math.sin(angle);
+          const vy = u * Math.cos(angle);
+          simSnapshots.push({
+            t, theta: theta_bank, R: r_circ, v_opt, speed: u, N: N_force, entities: {
+              car: { name: `Banked Car (v=${u.toFixed(1)}m/s)`, x, y, vx, vy, ax: -omega * omega * x, ay: -omega * omega * y, speed: u, ke: 0.5 * m * u * u }
+            }
+          });
+        }
+      } else if (activeTopicId === "banking_with_friction") {
+        const theta_bank = incRad;
+        const tanTh = Math.tan(theta_bank);
+        const v_opt = Math.sqrt(r_circ * g * tanTh);
+
+        const denom_max = 1 - mu * tanTh;
+        const v_max = (denom_max > 0.001) ? Math.sqrt(r_circ * g * ((tanTh + mu) / denom_max)) : 999.0;
+
+        const num_min = tanTh - mu;
+        const v_min = (num_min > 0.001) ? Math.sqrt(r_circ * g * (num_min / (1 + mu * tanTh))) : 0.0;
+
+        const omega = u / r_circ;
+        simDuration = 10.0;
+        const totalSteps = Math.ceil(simDuration / dt);
+
+        for (let i = 0; i <= totalSteps; i++) {
+          const t = i * dt;
+          const angle = omega * t;
+          const x = r_circ * Math.cos(angle);
+          const y = r_circ * Math.sin(angle);
+          const vx = -u * Math.sin(angle);
+          const vy = u * Math.cos(angle);
+          simSnapshots.push({
+            t, theta: theta_bank, R: r_circ, v_opt, v_max, v_min, speed: u, mu, entities: {
+              car: { name: `Banked Car (μ=${mu.toFixed(2)})`, x, y, vx, vy, ax: -omega * omega * x, ay: -omega * omega * y, speed: u, ke: 0.5 * m * u * u }
+            }
+          });
+        }
+      } else if (activeTopicId === "vertical_circle_tension" || activeTopicId === "vertical_circle_critical") {
+        const u_entry = activeTopicId.includes("critical") ? Math.sqrt(5 * g * r_circ) : u;
+        const omega_vc = u_entry / r_circ;
+        simDuration = 6.0;
+        const totalSteps = Math.ceil(simDuration / dt);
+
+        for (let i = 0; i <= totalSteps; i++) {
+          const t = i * dt;
+          const th = omega_vc * t - Math.PI / 2;
+          const x = r_circ * Math.cos(th);
+          const y = r_circ * Math.sin(th);
+          const v_curr = Math.sqrt(Math.max(0.1, u_entry * u_entry - 2 * g * (y + r_circ)));
+          const T_tension = (m * v_curr * v_curr / r_circ) + m * g * Math.cos(th + Math.PI / 2);
+
+          simSnapshots.push({
+            t, tension: Math.max(0, T_tension), entities: {
+              bob: { name: "vertical_pendulum", x, y, vx: -v_curr * Math.sin(th), vy: v_curr * Math.cos(th), ax: 0, ay: 0, speed: v_curr, ke: 0.5 * m * v_curr * v_curr }
+            }
+          });
+        }
+
+      // ── Level 4: Work, Energy & Power ──
+      } else if (activeTopicId.includes("spring")) {
+        const omega_s = Math.sqrt(k / m);
+        const A_s = 6.0;
+        simDuration = 12.0;
+        const totalSteps = Math.ceil(simDuration / dt);
+
+        for (let i = 0; i <= totalSteps; i++) {
+          const t = i * dt;
+          const x = A_s * Math.cos(omega_s * t);
+          const vx = -A_s * omega_s * Math.sin(omega_s * t);
+          const ax = -omega_s * omega_s * x;
+          const speed = Math.abs(vx);
+          simSnapshots.push({
+            t, entities: {
+              mass: { name: "spring_oscillator", x, y: 0, vx, vy: 0, ax, ay: 0, speed, ke: 0.5 * m * speed * speed }
+            }
+          });
+        }
+      } else if (activeTopicId === "mechanical_energy_conservation") {
+        simDuration = 6.0;
+        const totalSteps = Math.ceil(simDuration / dt);
+        const E_tot = m * g * 20.0;
+
+        for (let i = 0; i <= totalSteps; i++) {
+          const t = i * dt;
+          const x = -15 + 6.0 * t;
+          const y = 8.0 * (1 + Math.cos(0.2 * x));
+          const pe = m * g * y;
+          const ke = Math.max(0, E_tot - pe);
+          const speed = Math.sqrt(2 * ke / m);
+
+          simSnapshots.push({
+            t, entities: {
+              carriage: { name: "roller_coaster", x, y, vx: speed, vy: 0, ax: 0, ay: 0, speed, ke }
+            }
+          });
+        }
+      } else if (activeTopicId.includes("work") || activeTopicId.includes("energy") || activeTopicId.includes("power")) {
+        const a_w = F / m;
+        simDuration = 4.0;
+        const totalSteps = Math.ceil(simDuration / dt);
+
+        for (let i = 0; i <= totalSteps; i++) {
+          const t = i * dt;
+          const x = 0.5 * a_w * t * t;
+          const vx = a_w * t;
+          simSnapshots.push({
+            t, workDone: F * x, entities: {
+              particle: { name: "work_crate", x, y: 0, vx, vy: 0, ax: a_w, ay: 0, speed: vx, ke: 0.5 * m * vx * vx }
+            }
+          });
+        }
+
+      // ── Level 5: Collisions & Restitution ──
+      } else if (activeTopicId === "wall_collision") {
+        simDuration = 4.0;
+        const totalSteps = Math.ceil(simDuration / dt);
+        const t_w = 1.8;
+
+        for (let i = 0; i <= totalSteps; i++) {
+          const t = i * dt;
+          let x, vx;
+          if (t <= t_w) {
+            x = -15 + u * t;
+            vx = u;
+          } else {
+            const dt_w = t - t_w;
+            x = (-15 + u * t_w) - e_rest * u * dt_w;
+            vx = -e_rest * u;
+          }
+          simSnapshots.push({
+            t, entities: {
+              ball: { name: "rebound_ball", x, y: 0, vx, vy: 0, ax: 0, ay: 0, speed: Math.abs(vx), ke: 0.5 * m * vx * vx }
+            }
+          });
+        }
+      } else if (activeTopicId.includes("collision") || activeTopicId.includes("inelastic")) {
+        const m1 = m, m2 = m * 1.2;
+        const u1 = u, u2 = 0;
+        const e_use = activeTopicId.includes("perfectly_inelastic") ? 0 : e_rest;
+        const v1 = (m1 * u1 + m2 * u2 - m2 * e_use * (u1 - u2)) / (m1 + m2);
+        const v2 = (m1 * u1 + m2 * u2 + m1 * e_use * (u1 - u2)) / (m1 + m2);
+        simDuration = 4.0;
+        const totalSteps = Math.ceil(simDuration / dt);
+        const t_impact = 1.6;
+
+        for (let i = 0; i <= totalSteps; i++) {
+          const t = i * dt;
+          let x1, x2, vx1, vx2;
+          if (t <= t_impact) {
+            x1 = -18 + u1 * t;
+            x2 = 2 + u2 * t;
+            vx1 = u1; vx2 = u2;
+          } else {
+            const dt_imp = t - t_impact;
+            x1 = (-18 + u1 * t_impact) + v1 * dt_imp;
+            x2 = (2 + u2 * t_impact) + v2 * dt_imp;
+            vx1 = v1; vx2 = v2;
+          }
+          simSnapshots.push({
+            t, entities: {
+              ball1: { name: `m1 (${m1.toFixed(1)}kg)`, x: x1, y: 0, vx: vx1, vy: 0, ax: 0, ay: 0, speed: Math.abs(vx1), ke: 0.5 * m1 * vx1 * vx1 },
+              ball2: { name: `m2 (${m2.toFixed(1)}kg)`, x: x2, y: 0, vx: vx2, vy: 0, ax: 0, ay: 0, speed: Math.abs(vx2), ke: 0.5 * m2 * vx2 * vx2 },
+            }
+          });
+        }
+
+      // ── Level 6: Projectile Motion ──
+      } else if (activeTopicId === "projectile_complementary") {
+        const angleA = (thDeg === 45) ? 30 : thDeg;
+        const angleB = (thDeg === 45) ? 60 : (90 - thDeg);
+        const th1 = angleA * Math.PI / 180;
+        const th2 = angleB * Math.PI / 180;
+
+        const T1 = (2 * u * Math.sin(th1)) / g;
+        const T2 = (2 * u * Math.sin(th2)) / g;
+        simDuration = Math.max(T1, T2);
+        const totalSteps = Math.ceil(simDuration / dt);
+
+        for (let i = 0; i <= totalSteps; i++) {
+          const t = i * dt;
+          const x1 = t <= T1 ? u * Math.cos(th1) * t : u * Math.cos(th1) * T1;
+          const y1 = t <= T1 ? Math.max(0, u * Math.sin(th1) * t - 0.5 * g * t * t) : 0;
+          const vx1 = t <= T1 ? u * Math.cos(th1) : 0;
+          const vy1 = t <= T1 ? u * Math.sin(th1) - g * t : 0;
+
+          const x2 = t <= T2 ? u * Math.cos(th2) * t : u * Math.cos(th2) * T2;
+          const y2 = t <= T2 ? Math.max(0, u * Math.sin(th2) * t - 0.5 * g * t * t) : 0;
+          const vx2 = t <= T2 ? u * Math.cos(th2) : 0;
+          const vy2 = t <= T2 ? u * Math.sin(th2) - g * t : 0;
+
+          simSnapshots.push({
+            t, entities: {
+              ball_primary: { name: `Cannon A (${angleA.toFixed(0)}°)`, x: x1, y: y1, vx: vx1, vy: vy1, ax: 0, ay: -g, speed: Math.hypot(vx1, vy1), ke: 0.5 * m * (vx1*vx1 + vy1*vy1) },
+              ball_comp: { name: `Cannon B (${angleB.toFixed(0)}°)`, x: x2, y: y2, vx: vx2, vy: vy2, ax: 0, ay: -g, speed: Math.hypot(vx2, vy2), ke: 0.5 * m * (vx2*vx2 + vy2*vy2) },
+            }
+          });
+        }
+      } else {
+        const T_flight = (2 * u * Math.sin(thRad)) / g;
+        simDuration = Math.max(T_flight, 1.0);
+        const totalSteps = Math.ceil(simDuration / dt);
+
+        for (let i = 0; i <= totalSteps; i++) {
+          const t = i * dt;
+          const x = u * Math.cos(thRad) * t;
+          const y = Math.max(0, u * Math.sin(thRad) * t - 0.5 * g * t * t);
+          const vx = u * Math.cos(thRad);
+          const vy = u * Math.sin(thRad) - g * t;
+          const speed = Math.hypot(vx, vy);
+
+          simSnapshots.push({
+            t, entities: {
+              ball: { name: "cannonball", x, y, vx, vy, ax: 0, ay: -g, speed, ke: 0.5 * m * speed * speed }
+            }
+          });
+          if (t > T_flight && y <= 0) break;
+        }
+      }
+
+      updateKaTeXFormulas();
+      updateConceptNotes();
+    }
+
+    // ── Dynamic Auto-Framing ──────────────────────────────────────────
+    function recalcAutoFraming(instant = false) {
+      if (!simSnapshots || simSnapshots.length === 0) return;
+
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+
+      simSnapshots.forEach(s => {
+        Object.values(s.entities).forEach(e => {
+          if (e.x < minX) minX = e.x;
+          if (e.x > maxX) maxX = e.x;
+          if (e.y < minY) minY = e.y;
+          if (e.y > maxY) maxY = e.y;
+        });
+      });
+
+      if (activeTopicId.includes("spring")) {
+        minX = -10; maxX = 10; minY = -4; maxY = 4;
+      } else if (activeTopicId.includes("incline") || activeTopicId.includes("repose")) {
+        minX = -4; maxX = 26; minY = -2; maxY = 18;
+      } else if (activeTopicId.includes("vertical_circle") || activeTopicId.includes("centripetal") || activeTopicId.includes("banking")) {
+        const r = parseFloat(rRadius.value);
+        minX = -r * 1.5; maxX = r * 1.5; minY = -r * 1.5; maxY = r * 1.5;
+      } else if (activeTopicId.includes("collision") || activeTopicId.includes("momentum") || activeTopicId.includes("impulse") || activeTopicId.includes("wall")) {
+        minX = Math.min(minX, -20); maxX = Math.max(maxX, 20);
+        minY = -2; maxY = 5;
+      } else {
+        minX = Math.min(minX, 0);
+        minY = Math.min(minY, 0);
+      }
+
+      const padding = 75;
+      const viewW = (canvas.width / window.devicePixelRatio) - padding * 2;
+      const viewH = (canvas.height / window.devicePixelRatio) - padding * 2;
+
+      const spanX = Math.max(maxX - minX, 8);
+      const spanY = Math.max(maxY - minY, 8);
+
+      const targetScale = Math.min(viewW / spanX, viewH / spanY);
+      camera.targetScale = Math.max(targetScale, 2.5);
+
+      const cx = (minX + maxX) / 2;
+      const cy = (minY + maxY) / 2;
+
+      const centerScreenX = canvas.width / (2 * window.devicePixelRatio);
+      const centerScreenY = canvas.height / (2 * window.devicePixelRatio);
+
+      camera.targetOffsetX = centerScreenX - cx * camera.targetScale;
+      camera.targetOffsetY = centerScreenY + cy * camera.targetScale;
+
+      if (instant) {
+        camera.scale = camera.targetScale;
+        camera.offsetX = camera.targetOffsetX;
+        camera.offsetY = camera.targetOffsetY;
+      }
+    }
+
+    // ── KaTeX Math Cards Generator for All 40 Topics ──────────────────
+    function renderLatex(latexStr) {
+      if (window.katex) {
+        try {
+          return katex.renderToString(latexStr, { displayMode: true, throwOnError: false });
+        } catch (e) { return latexStr; }
+      }
+      return latexStr;
+    }
+
+    function updateKaTeXFormulas() {
+      const container = document.getElementById("mathCardsContainer");
+      const F = parseFloat(rForce.value);
+      const m = parseFloat(rMass.value);
+      const u = parseFloat(rV0.value);
+      const thDeg = parseFloat(rAngle.value);
+      const thRad = thDeg * Math.PI / 180;
+      const incDeg = parseFloat(rIncline.value);
+      const incRad = incDeg * Math.PI / 180;
+      const mu = parseFloat(rFriction.value);
+      const r_circ = parseFloat(rRadius.value);
+      const k = parseFloat(rSpring.value);
+      const e_rest = parseFloat(rRestitution.value);
+
+      let title = "Physics Derivation";
+      let keyFormula = "";
+      let keyValBadge = "";
+      let steps = [];
+
+      // ── Level 1: Mechanics ──
+      if (activeTopicId === "newton_second_law") {
+        const a_calc = (F / m).toFixed(2);
+        title = "Newton's Second Law";
+        keyValBadge = `a = ${a_calc} m/s²`;
+        keyFormula = "\\vec{F} = \\frac{d\\vec{p}}{dt} = m\\frac{d\\vec{v}}{dt} = m\\vec{a}";
+        steps = [
+          `\\vec{p} = m\\vec{v} = ${m.toFixed(1)} \\text{ kg}\\cdot\\vec{v} \\quad \\text{(Linear Momentum)}`,
+          `\\vec{F} = \\frac{d(m\\vec{v})}{dt} = m\\frac{d\\vec{v}}{dt} = m\\vec{a}`,
+          `a = \\frac{F}{m} = \\frac{${F.toFixed(1)}}{${m.toFixed(1)}} = ${a_calc} \\text{ m/s}^2`,
+        ];
+      } else if (activeTopicId === "impulse_momentum") {
+        const J_calc = (m * (2 * u)).toFixed(2);
+        title = "Impulse–Momentum Theorem";
+        keyValBadge = `J = ${J_calc} N·s`;
+        keyFormula = "\\vec{J} = \\int \\vec{F}\\,dt = \\Delta\\vec{p} = m\\vec{v}_2 - m\\vec{v}_1";
+        steps = [
+          `\\vec{F} = \\frac{d\\vec{p}}{dt} \\implies \\vec{F}\\,dt = d\\vec{p}`,
+          `\\vec{J} = \\int_{t_1}^{t_2} \\vec{F}\\,dt = \\int_{p_1}^{p_2} d\\vec{p} = \\Delta\\vec{p}`,
+          `\\Delta p = m(u) - m(-u) = 2mu = 2(${m.toFixed(1)})(${u.toFixed(1)}) = ${J_calc} \\text{ N}\\cdot\\text{s}`,
+        ];
+      } else if (activeTopicId === "momentum_conservation") {
+        const p_tot = (m * u * 0.7 + m * 1.5 * (-u * 0.4)).toFixed(2);
+        title = "Momentum Conservation";
+        keyValBadge = `Σp = ${p_tot} kg·m/s`;
+        keyFormula = "\\vec{F}_{12} = -\\vec{F}_{21} \\implies \\frac{d}{dt}(\\vec{p}_1 + \\vec{p}_2) = 0";
+        steps = [
+          `\\vec{F}_{12} = -\\vec{F}_{21} \\quad \\text{(Action-Reaction pairs)}`,
+          `\\frac{d\\vec{p}_1}{dt} + \\frac{d\\vec{p}_2}{dt} = 0 \\implies \\frac{d}{dt}(\\Sigma \\vec{p}) = 0`,
+          `m_1 u_1 + m_2 u_2 = m_1 v_1 + m_2 v_2 = \\text{constant} = ${p_tot} \\text{ kg}\\cdot\\text{m/s}`,
+        ];
+      } else if (activeTopicId === "equations_of_motion") {
+        const a_val = (F / m).toFixed(2);
+        title = "Four Kinematic Equations";
+        keyValBadge = `a = ${a_val} m/s²`;
+        keyFormula = "v = u + at, \\quad s = ut + \\frac{1}{2}at^2, \\quad v^2 = u^2 + 2as";
+        steps = [
+          `a = \\frac{dv}{dt} \\implies \\int_u^v dv = \\int_0^t a\\,dt \\implies v = u + at`,
+          `v = \\frac{ds}{dt} = u + at \\implies s = ut + \\frac{1}{2}at^2`,
+          `a = v\\frac{dv}{ds} \\implies v^2 = u^2 + 2as, \\quad s = \\left(\\frac{u+v}{2}\\right)t`,
+        ];
+      } else if (activeTopicId === "newton_third_law") {
+        title = "Newton's Third Law (Action-Reaction)";
+        keyValBadge = `|F12| = |F21| = ${F.toFixed(1)} N`;
+        keyFormula = "\\vec{F}_{12} = -\\vec{F}_{21}, \\quad |\\vec{F}_{12}| = |\\vec{F}_{21}|";
+        steps = [
+          `\\text{Action and reaction act on two mutually interacting bodies.}`,
+          `\\vec{F}_{AB} = -\\vec{F}_{BA} \\implies |\\vec{F}_{AB}| = ${F.toFixed(1)} \\text{ N}`,
+          `\\text{They never cancel because they act on different entities.}`,
+        ];
+
+      // ── Level 2: Friction & Inclines ──
+      } else if (activeTopicId === "static_friction") {
+        const f_max = (mu * m * g).toFixed(2);
+        title = "Limiting Static Friction";
+        keyValBadge = `f_max = ${f_max} N`;
+        keyFormula = "f_s \\le f_{\\max} = \\mu_s N = \\mu_s mg";
+        steps = [
+          `\\text{Static friction is self-adjusting: } f_s = F_{\\text{applied}} \\quad (\\text{if } F \\le f_{\\max})`,
+          `N = mg = (${m.toFixed(1)})(${g}) = ${(m * g).toFixed(1)} \\text{ N}`,
+          `f_{\\max} = \\mu_s N = (${mu.toFixed(2)})(${(m * g).toFixed(1)}) = ${f_max} \\text{ N}`,
+        ];
+      } else if (activeTopicId === "kinetic_friction") {
+        const f_k = (mu * m * g).toFixed(2);
+        title = "Kinetic Friction";
+        keyValBadge = `f_k = ${f_k} N`;
+        keyFormula = "f_k = \\mu_k N = \\mu_k mg";
+        steps = [
+          `\\text{Once relative motion begins, friction drops to constant } f_k.`,
+          `f_k = \\mu_k N = \\mu_k mg = (${mu.toFixed(2)})(${m.toFixed(1)})(${g}) = ${f_k} \\text{ N}`,
+        ];
+      } else if (activeTopicId === "angle_of_friction") {
+        const lam = (Math.atan(mu) * 180 / Math.PI).toFixed(1);
+        title = "Angle of Friction (λ)";
+        keyValBadge = `λ = ${lam}°`;
+        keyFormula = "\\tan\\lambda = \\frac{f_{\\max}}{N} = \\mu_s \\implies \\lambda = \\tan^{-1}\\mu_s";
+        steps = [
+          `\\text{Contact Resultant: } \\vec{R} = \\vec{N} + \\vec{f}_s`,
+          `\\tan\\lambda = \\frac{f_{\\max}}{N} = \\frac{\\mu_s N}{N} = \\mu_s = ${mu.toFixed(2)}`,
+          `\\lambda = \\tan^{-1}(${mu.toFixed(2)}) = ${lam}^\\circ`,
+        ];
+      } else if (activeTopicId === "angle_of_repose") {
+        const theta_r = (Math.atan(mu) * 180 / Math.PI).toFixed(1);
+        title = "Angle of Repose (θ_r)";
+        keyValBadge = `θ_r = ${theta_r}°`;
+        keyFormula = "mg\\sin\\theta_r = \\mu_s mg\\cos\\theta_r \\implies \\tan\\theta_r = \\mu_s = \\tan\\lambda";
+        steps = [
+          `\\text{Equilibrium on incline: } mg\\sin\\theta = f_s \\le \\mu_s mg\\cos\\theta`,
+          `\\text{At limiting slip: } \\tan\\theta_r = \\mu_s = ${mu.toFixed(2)}`,
+          `\\theta_r = \\lambda = \\tan^{-1}(${mu.toFixed(2)}) = ${theta_r}^\\circ`,
+        ];
+      } else if (activeTopicId === "incline_acceleration") {
+        const a_inc = Math.max(0, g * (Math.sin(incRad) - mu * Math.cos(incRad))).toFixed(2);
+        title = "Incline Acceleration";
+        keyValBadge = `a = ${a_inc} m/s²`;
+        keyFormula = "a = g(\\sin\\theta - \\mu_k\\cos\\theta)";
+        steps = [
+          `F_{\\text{net}} = mg\\sin\\theta - \\mu_k mg\\cos\\theta = ma`,
+          `a = ${g}(\\sin ${incDeg}^\\circ - ${mu.toFixed(2)}\\cos ${incDeg}^\\circ) = ${a_inc} \\text{ m/s}^2`,
+        ];
+      } else if (activeTopicId === "pull_horizontal") {
+        const a_p = Math.max(0, (F - mu * m * g) / m).toFixed(2);
+        title = "Block Pulled Horizontally";
+        keyValBadge = `a = ${a_p} m/s²`;
+        keyFormula = "a = \\frac{F - \\mu_k mg}{m}";
+        steps = [
+          `F_{\\text{net}} = F - f_k = F - \\mu_k mg`,
+          `a = \\frac{${F.toFixed(1)} - (${mu.toFixed(2)})(${m.toFixed(1)})(${g})}{${m.toFixed(1)}} = ${a_p} \\text{ m/s}^2`,
+        ];
+      } else if (activeTopicId === "pull_angle") {
+        const N_val = Math.max(0, m * g - F * Math.sin(thRad)).toFixed(1);
+        title = "Block Pulled at Angle θ";
+        keyValBadge = `N = ${N_val} N`;
+        keyFormula = "N = mg - F\\sin\\theta, \\quad a = \\frac{F\\cos\\theta - \\mu_k(mg - F\\sin\\theta)}{m}";
+        steps = [
+          `\\text{Vertical: } N + F\\sin\\theta = mg \\implies N = mg - F\\sin\\theta = ${N_val} \\text{ N}`,
+          `\\text{Frictional reduction: } f_k = \\mu_k N \\text{ decreases as } \\theta \\uparrow`,
+        ];
+      } else if (activeTopicId === "min_pull_force" || activeTopicId === "optimum_pull_angle") {
+        const th_opt = (Math.atan(mu) * 180 / Math.PI).toFixed(1);
+        const F_min = ((mu * m * g) / Math.sqrt(1 + mu * mu)).toFixed(2);
+        title = "Minimum Pulling Force & Optimum Angle";
+        keyValBadge = `F_min = ${F_min} N`;
+        keyFormula = "\\theta_{\\text{opt}} = \\tan^{-1}\\mu_s = \\lambda, \\quad F_{\\min} = \\frac{\\mu_s mg}{\\sqrt{1 + \\mu_s^2}}";
+        steps = [
+          `F(\\theta) = \\frac{\\mu mg}{\\cos\\theta + \\mu\\sin\\theta} \\implies \\text{Max denom when } \\tan\\theta = \\mu`,
+          `\\theta_{\\text{opt}} = \\tan^{-1}(${mu.toFixed(2)}) = ${th_opt}^\\circ`,
+          `F_{\\min} = \\frac{(${mu.toFixed(2)})(${m.toFixed(1)})(${g})}{\\sqrt{1 + ${mu.toFixed(2)}^2}} = ${F_min} \\text{ N}`,
+        ];
+
+      // ── Level 3: Circular & Banking ──
+      } else if (activeTopicId === "centripetal_force") {
+        const Fc = (m * u * u / r_circ).toFixed(1);
+        title = "Centripetal Force";
+        keyValBadge = `Fc = ${Fc} N`;
+        keyFormula = "a_c = \\frac{v^2}{r}, \\quad F_c = \\frac{mv^2}{r} = m\\omega^2 r";
+        steps = [
+          `a_c = \\frac{v^2}{r} = \\frac{${u.toFixed(1)}^2}{${r_circ.toFixed(1)}} = ${(u*u/r_circ).toFixed(2)} \\text{ m/s}^2`,
+          `F_c = m a_c = (${m.toFixed(1)})(${(u*u/r_circ).toFixed(2)}) = ${Fc} \\text{ N}`,
+        ];
+      } else if (activeTopicId === "banking_no_friction") {
+        const v_opt = Math.sqrt(r_circ * g * Math.tan(thRad)).toFixed(2);
+        title = "Banking of Roads (Frictionless)";
+        keyValBadge = `v_opt = ${v_opt} m/s`;
+        keyFormula = "N\\sin\\theta = \\frac{mv^2}{r}, \\quad N\\cos\\theta = mg \\implies \\tan\\theta = \\frac{v^2}{rg}";
+        steps = [
+          `\\tan\\theta = \\frac{v^2}{rg} \\implies v_{\\text{opt}} = \\sqrt{rg\\tan\\theta}`,
+          `v_{\\text{opt}} = \\sqrt{(${r_circ.toFixed(1)})(${g})(\\tan ${thDeg}^\\circ)} = ${v_opt} \\text{ m/s}`,
+        ];
+      } else if (activeTopicId === "banking_with_friction") {
+        const v_max = Math.sqrt(r_circ * g * (Math.tan(thRad) + mu) / (1 - mu * Math.tan(thRad))).toFixed(2);
+        title = "Banking with Friction (Safe Envelope)";
+        keyValBadge = `v_max = ${v_max} m/s`;
+        keyFormula = "v_{\\max} = \\sqrt{rg\\left(\\frac{\\tan\\theta + \\mu}{1 - \\mu\\tan\\theta}\\right)}";
+        steps = [
+          `\\text{Lateral tyre friction prevents sliding up the inclined curve.}`,
+          `v_{\\max} = ${v_max} \\text{ m/s}`,
+        ];
+      } else if (activeTopicId === "vertical_circle_tension") {
+        const T_bot = (m * g + m * u * u / r_circ).toFixed(1);
+        title = "Vertical Circle Tension";
+        keyValBadge = `T_bot = ${T_bot} N`;
+        keyFormula = "T_{\\text{bottom}} = mg + \\frac{mv^2}{r}, \\quad T_{\\text{top}} = \\frac{mv^2}{r} - mg";
+        steps = [
+          `T_{\\text{bottom}} = mg + \\frac{mv^2}{r} = (${m.toFixed(1)})(${g}) + \\frac{(${m.toFixed(1)})(${u.toFixed(1)}^2)}{${r_circ.toFixed(1)}} = ${T_bot} \\text{ N}`,
+          `\\Delta T = T_{\\text{bottom}} - T_{\\text{top}} = 6mg = ${(6 * m * g).toFixed(1)} \\text{ N}`,
+        ];
+      } else if (activeTopicId === "vertical_circle_critical") {
+        const v_b = Math.sqrt(5 * g * r_circ).toFixed(2);
+        const v_t = Math.sqrt(g * r_circ).toFixed(2);
+        title = "Critical Loop Speed";
+        keyValBadge = `v_bottom = ${v_b} m/s`;
+        keyFormula = "v_{\\text{top}} = \\sqrt{gr}, \\quad v_{\\text{bottom}} = \\sqrt{5gr}";
+        steps = [
+          `\\text{Tension at top: } T_{\\text{top}} \\ge 0 \\implies v_{\\text{top}} \\ge \\sqrt{gr} = ${v_t} \\text{ m/s}`,
+          `\\text{Energy conservation: } v_{\\text{bottom}} = \\sqrt{v_{\\text{top}}^2 + 4gr} = \\sqrt{5gr} = ${v_b} \\text{ m/s}`,
+        ];
+
+      // ── Level 4: Work, Energy & Power ──
+      } else if (activeTopicId === "work_constant_force") {
+        title = "Constant Force Work";
+        keyValBadge = `W = F·s`;
+        keyFormula = "W = \\vec{F}\\cdot\\vec{s} = Fs\\cos\\theta";
+        steps = [
+          `W = \\int \\vec{F}\\cdot d\\vec{r} = F\\cos\\theta \\int ds = F s \\cos\\theta`,
+          `W = (${F.toFixed(1)}) s \\cos(${thDeg}^\\circ) \\text{ Joules}`,
+        ];
+      } else if (activeTopicId === "work_variable_force") {
+        title = "Variable Force Work";
+        keyValBadge = "W = ∫F dx";
+        keyFormula = "W = \\int_{x_1}^{x_2} F(x)\\,dx = \\text{Area under } F-x \\text{ curve}";
+        steps = [
+          `dW = F(x)\\,dx \\implies W = \\int_{x_1}^{x_2} F(x)\\,dx`,
+          `\\text{For Hooke's Law: } W = \\int_0^x kx'\\,dx' = \\frac{1}{2}kx^2`,
+        ];
+      } else if (activeTopicId === "work_energy_theorem" || activeTopicId === "kinetic_energy") {
+        title = "Work–Energy Theorem";
+        keyValBadge = "W_net = ΔK";
+        keyFormula = "W_{\\text{net}} = \\Delta K = \\frac{1}{2}mv^2 - \\frac{1}{2}mu^2";
+        steps = [
+          `W = \\int F\\,ds = \\int m\\frac{dv}{dt}ds = \\int_u^v mv\\,dv = \\frac{1}{2}mv^2 - \\frac{1}{2}mu^2`,
+          `\\therefore W_{\\text{net}} = K_f - K_i = \\Delta K`,
+        ];
+      } else if (activeTopicId === "gravitational_pe") {
+        title = "Gravitational Potential Energy";
+        keyValBadge = "U = mgh";
+        keyFormula = "\\Delta U = -W_{\\text{conservative}} = \\int_0^h mg\\,dy = mgh";
+        steps = [
+          `W_g = \\int_0^h (-mg)\\,dy = -mgh \\implies U(h) = mgh`,
+        ];
+      } else if (activeTopicId === "mechanical_energy_conservation") {
+        title = "Mechanical Energy Conservation";
+        keyValBadge = "E_tot = const";
+        keyFormula = "E_{\\text{total}} = K + U = \\frac{1}{2}mv^2 + mgh = \\text{constant}";
+        steps = [
+          `\\frac{dE}{dt} = \\frac{dK}{dt} + \\frac{dU}{dt} = \\vec{F}\\cdot\\vec{v} + \\left(-\\vec{F}\\cdot\\vec{v}\\right) = 0`,
+          `\\therefore K_1 + U_1 = K_2 + U_2`,
+        ];
+      } else if (activeTopicId === "spring_pe" || activeTopicId === "spring_work") {
+        title = "Spring Potential Energy & Work";
+        keyValBadge = "U = ½kx²";
+        keyFormula = "U_{\\text{spring}} = \\frac{1}{2}kx^2, \\quad W_{\\text{spring}} = -\\frac{1}{2}k(x_2^2 - x_1^2)";
+        steps = [
+          `F_{\\text{spring}} = -kx`,
+          `W = \\int_{x_1}^{x_2} (-kx)\\,dx = -\\frac{1}{2}k(x_2^2 - x_1^2) \\implies U = \\frac{1}{2}kx^2`,
+        ];
+      } else if (activeTopicId === "power") {
+        title = "Mechanical Power";
+        keyValBadge = "P = F·v";
+        keyFormula = "P = \\frac{dW}{dt} = \\vec{F}\\cdot\\frac{d\\vec{r}}{dt} = \\vec{F}\\cdot\\vec{v} = Fv\\cos\\theta";
+        steps = [
+          `P_{\\text{avg}} = \\frac{\\Delta W}{\\Delta t}, \\quad P_{\\text{inst}} = \\vec{F}\\cdot\\vec{v}`,
+        ];
+
+      // ── Level 5: Collisions & Restitution ──
+      } else if (activeTopicId === "elastic_collision_1d") {
+        title = "1D Elastic Collision";
+        keyValBadge = "e = 1";
+        keyFormula = "v_1 = \\frac{m_1-m_2}{m_1+m_2}u_1 + \\frac{2m_2}{m_1+m_2}u_2";
+        steps = [
+          `m_1 u_1 + m_2 u_2 = m_1 v_1 + m_2 v_2 \\quad (\\text{Momentum})`,
+          `\\frac{1}{2}m_1 u_1^2 + \\frac{1}{2}m_2 u_2^2 = \\frac{1}{2}m_1 v_1^2 + \\frac{1}{2}m_2 v_2^2 \\quad (\\text{KE})`,
+          `v_2 - v_1 = -(u_2 - u_1) \\implies e = 1`,
+        ];
+      } else if (activeTopicId === "coefficient_of_restitution") {
+        title = "Coefficient of Restitution (e)";
+        keyValBadge = `e = ${e_rest.toFixed(2)}`;
+        keyFormula = "e = \\frac{v_2 - v_1}{u_1 - u_2} = \\frac{v_{\\text{separation}}}{v_{\\text{approach}}}";
+        steps = [
+          `e = 1 \\implies \\text{Perfect Elastic}, \\quad e = 0 \\implies \\text{Perfect Inelastic}`,
+        ];
+      } else if (activeTopicId === "perfectly_inelastic") {
+        title = "Perfectly Inelastic Collision";
+        keyValBadge = "e = 0";
+        keyFormula = "v_{\\text{common}} = \\frac{m_1 u_1 + m_2 u_2}{m_1 + m_2}";
+        steps = [
+          `m_1 u_1 + m_2 u_2 = (m_1 + m_2) v_{\\text{common}}`,
+          `v_{\\text{common}} = \\frac{m_1 u_1 + m_2 u_2}{m_1 + m_2}`,
+        ];
+      } else if (activeTopicId === "kinetic_energy_loss") {
+        title = "KE Loss in Inelastic Collision";
+        keyValBadge = "ΔK > 0";
+        keyFormula = "\\Delta K = \\frac{1}{2}\\frac{m_1 m_2}{m_1 + m_2}(u_1 - u_2)^2(1 - e^2)";
+        steps = [
+          `\\Delta K = K_i - K_f = \\frac{1}{2}\\frac{m_1 m_2}{m_1 + m_2}(u_1 - u_2)^2 (1 - e^2)`,
+        ];
+      } else if (activeTopicId === "wall_collision") {
+        title = "Collision with Fixed Wall";
+        keyValBadge = `v = -${e_rest.toFixed(2)}u`;
+        keyFormula = "v = -e u \\quad (\\text{Rebound from } m_{\\text{wall}} \\to \\infty)";
+        steps = [
+          `v = \\lim_{m_2\\to\\infty} \\left[\\frac{m_1 - e m_2}{m_1 + m_2}u\\right] = -e u`,
+        ];
+
+      // ── Level 6: Projectile Motion ──
+      } else if (activeTopicId === "projectile_range") {
+        const R = ((u * u * Math.sin(2 * thRad)) / g).toFixed(2);
+        title = "Horizontal Range (R)";
+        keyValBadge = `R = ${R} m`;
+        keyFormula = "R = \\frac{u^2 \\sin(2\\theta)}{g}";
+        steps = [
+          `x(t) = (u\\cos\\theta)t, \\quad T = \\frac{2u\\sin\\theta}{g}`,
+          `R = (u\\cos\\theta)\\left(\\frac{2u\\sin\\theta}{g}\\right) = \\frac{u^2\\sin(2\\theta)}{g} = ${R} \\text{ m}`,
+        ];
+      } else if (activeTopicId === "projectile_max_height") {
+        const H = ((u * u * Math.sin(thRad) ** 2) / (2 * g)).toFixed(2);
+        title = "Maximum Height (H)";
+        keyValBadge = `H_max = ${H} m`;
+        keyFormula = "H_{\\max} = \\frac{u^2 \\sin^2\\theta}{2g}";
+        steps = [
+          `v_y = 0 \\implies 0 = (u\\sin\\theta)^2 - 2gH_{\\max}`,
+          `H_{\\max} = \\frac{u^2\\sin^2\\theta}{2g} = \\frac{${u.toFixed(1)}^2\\sin^2(${thDeg}^\\circ)}{2(${g})} = ${H} \\text{ m}`,
+        ];
+      } else if (activeTopicId === "projectile_time_of_flight") {
+        const T = ((2 * u * Math.sin(thRad)) / g).toFixed(2);
+        title = "Time of Flight (T)";
+        keyValBadge = `T = ${T} s`;
+        keyFormula = "T = \\frac{2u\\sin\\theta}{g}";
+        steps = [
+          `y(t) = (u\\sin\\theta)t - \\frac{1}{2}gt^2 = 0 \\implies t\\left(u\\sin\\theta - \\frac{1}{2}gt\\right) = 0`,
+          `T = \\frac{2u\\sin\\theta}{g} = \\frac{2(${u.toFixed(1)})\\sin(${thDeg}^\\circ)}{${g}} = ${T} \\text{ s}`,
+        ];
+      } else if (activeTopicId === "projectile_trajectory") {
+        title = "Equation of Trajectory (Parabola)";
+        keyValBadge = "y = ax - bx²";
+        keyFormula = "y = x\\tan\\theta - \\frac{gx^2}{2u^2\\cos^2\\theta}";
+        steps = [
+          `t = \\frac{x}{u\\cos\\theta}`,
+          `y = (u\\sin\\theta)\\left(\\frac{x}{u\\cos\\theta}\\right) - \\frac{1}{2}g\\left(\\frac{x}{u\\cos\\theta}\\right)^2 = x\\tan\\theta - \\frac{gx^2}{2u^2\\cos^2\\theta}`,
+        ];
+      } else if (activeTopicId === "projectile_max_range") {
+        const R_max = ((u * u) / g).toFixed(2);
+        title = "Maximum Range Condition (θ = 45°)";
+        keyValBadge = `R_max = ${R_max} m`;
+        keyFormula = "\\theta = 45^\\circ \\implies R_{\\max} = \\frac{u^2}{g}";
+        steps = [
+          `R(\\theta) = \\frac{u^2\\sin(2\\theta)}{g} \\implies \\text{Max when } \\sin(2\\theta) = 1`,
+          `2\\theta = 90^\\circ \\implies \\theta = 45^\\circ, \\quad R_{\\max} = \\frac{u^2}{g} = ${R_max} \\text{ m}`,
+        ];
+      } else if (activeTopicId === "projectile_complementary") {
+        const angleA = (thDeg === 45) ? 30 : thDeg;
+        const angleB = (thDeg === 45) ? 60 : (90 - thDeg);
+        const R_val = ((u * u * Math.sin(2 * (angleA * Math.PI / 180))) / g).toFixed(2);
+        title = "Complementary Angles Property";
+        keyValBadge = `R_θ = R_(90-θ) = ${R_val} m`;
+        keyFormula = "R_\\theta = R_{90^\\circ - \\theta} = \\frac{u^2 \\sin(2\\theta)}{g}";
+        steps = [
+          `\\sin[2(90^\\circ - \\theta)] = \\sin(180^\\circ - 2\\theta) = \\sin(2\\theta)`,
+          `\\text{Both Cannon A (${angleA}^\\circ) and Cannon B (${angleB}^\\circ) achieve the exact same range } R = ${R_val} \\text{ m!}`,
+        ];
+      }
+
+      container.innerHTML = `
+        <div class="math-card">
+          <div class="math-title">
+            <span>${title}</span>
+            <span class="math-val">${keyValBadge}</span>
+          </div>
+          <div class="katex-box">${renderLatex(keyFormula)}</div>
+          <div class="step-list">
+            ${steps.map((s, i) => `<div class="step-item"><b>Step ${i + 1}:</b> ${renderLatex(s)}</div>`).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function updateConceptNotes() {
+      const note = document.getElementById("conceptText");
+      if (activeTopicId.includes("newton") || activeTopicId.includes("impulse") || activeTopicId.includes("momentum")) {
+        note.innerHTML = `
+          • <b>Impulse as Area:</b> The geometric area under any Force vs Time graph is strictly equal to the net momentum change \\( \\Delta p \\).<br><br>
+          • <b>Newton's 3rd Law:</b> Action and reaction never act on the same body; thus, they never cancel each other out!
+        `;
+      } else if (activeTopicId.includes("friction") || activeTopicId.includes("repose") || activeTopicId.includes("pull")) {
+        note.innerHTML = `
+          • <b>Self-Adjusting Nature:</b> Static friction only matches the applied force until \\( f_s = \\mu_s N \\). Once it slips, friction drops to kinetic \\( f_k = \\mu_k N \\).<br><br>
+          • <b>Angle Equality:</b> Angle of Repose \\( \\theta_r \\) is mathematically identical to Angle of Friction \\( \\lambda \\).
+        `;
+      } else if (activeTopicId.includes("banking") || activeTopicId.includes("vertical_circle") || activeTopicId.includes("centripetal")) {
+        note.innerHTML = `
+          • <b>Zero-Friction Banking:</b> On an ideally banked turn, the horizontal component of Normal reaction \\( N\\sin\\theta \\) provides the entire centripetal force.<br><br>
+          • <b>Looping the Loop:</b> Critical speed at top is \\( \\sqrt{gr} \\) to keep string tension non-negative.
+        `;
+      } else if (activeTopicId.includes("work") || activeTopicId.includes("energy") || activeTopicId.includes("spring") || activeTopicId.includes("power")) {
+        note.innerHTML = `
+          • <b>Work–Energy Equivalence:</b> The net mechanical work done by all forces equals the change in kinetic energy \\( W_{\\text{net}} = \\Delta K \\).<br><br>
+          • <b>Conservative Forces:</b> Potential energy \\( U \\) is strictly defined only for conservative forces via \\( \\Delta U = -W_{\\text{conservative}} \\).
+        `;
+      } else if (activeTopicId.includes("collision") || activeTopicId.includes("restitution") || activeTopicId.includes("inelastic")) {
+        note.innerHTML = `
+          • <b>Restitution Limits:</b> \\( e = 1 \\) for perfectly elastic collisions (conserves both momentum & KE), \\( e = 0 \\) for perfectly inelastic collisions (maximum KE loss to heat/deformation).
+        `;
+      } else {
+        note.innerHTML = `
+          • <b>Independence of Perpendicular Motions:</b> Horizontal motion at constant speed \\( u\\cos\\theta \\) and vertical motion under uniform gravity \\( g \\) operate completely independently.
+        `;
+      }
+    }
+
+    // ── Projection & Dual 2D/3D Rendering Engine ──────────────────────
+    function toScreenX(wx) { return camera.offsetX + wx * camera.scale; }
+    function toScreenY(wy) { return camera.offsetY - wy * camera.scale; }
+
+    function drawScene() {
+      const w = canvas.width / window.devicePixelRatio;
+      const h = canvas.height / window.devicePixelRatio;
+
+      // Smooth camera gliding
+      if (document.getElementById("chkAutoFraming").checked) {
+        camera.scale += (camera.targetScale - camera.scale) * 0.15;
+        camera.offsetX += (camera.targetOffsetX - camera.offsetX) * 0.15;
+        camera.offsetY += (camera.targetOffsetY - camera.offsetY) * 0.15;
+      }
+
+      ctx.clearRect(0, 0, w, h);
+
+      // 1. Grid (2D Blueprint vs 3D Isometric Horizon)
+      if (renderDimension === "3d") {
+        draw3DCoordinateGrid(w, h);
+      } else {
+        draw2DBlueprintGrid(w, h);
+      }
+
+      if (!simSnapshots || simSnapshots.length === 0) return;
+
+      const frameIdx = Math.max(0, Math.min(Math.floor(currentFrame), simSnapshots.length - 1));
+      const snap = simSnapshots[frameIdx];
+      if (!snap || !snap.entities) return;
+
+      const entities = snap.entities;
+
+      // 2. Custom Geometry (2D Blueprint vs 3D Volumetric)
+      if (renderDimension === "3d") {
+        draw3DEnvironmentGeometry(snap);
+      } else {
+        draw2DEnvironmentGeometry(snap);
+      }
+
+      // 3. Trajectory Trails for ALL active entities
+      if (document.getElementById("chkTrail").checked) {
+        drawTrajectoryTrails();
+      }
+
+      // 4. Render Physical Bodies
+      Object.entries(entities).forEach(([key, e], idx) => {
+        const sx = toScreenX(e.x);
+        const sy = toScreenY(e.y);
+        const r_sphere = Math.max(10, 1.2 * camera.scale);
+        const isComp = key.includes("comp") || idx === 1;
+        const color = isComp ? "#a855f7" : "#38bdf8";
+
+        if (renderDimension === "3d") {
+          // ── 3D Mode Rendering ──
+          if (activeTopicId.includes("spring")) {
+            drawCoiledSpring3D(toScreenX(-8), toScreenY(0), sx, sy);
+            draw3DBlock(sx - 18, sy - 18, 36, 36, "#38bdf8");
+          } else if (activeTopicId.includes("incline") || activeTopicId.includes("repose")) {
+            const rotAng = e.inclineAngle || (snap.currentInc !== undefined ? snap.currentInc : parseFloat(rIncline.value) * Math.PI / 180);
+            ctx.save();
+            ctx.translate(sx, sy);
+            ctx.rotate(-rotAng);
+            draw3DBlock(-14, -28, 28, 28, "#f59e0b");
+            ctx.restore();
+          } else if (activeTopicId.includes("banking")) {
+            const heading = Math.atan2(e.vy, e.vx);
+            ctx.save();
+            ctx.translate(sx, sy);
+            ctx.rotate(heading);
+            draw3DCarChassis(0, 0, 32, 16, "#38bdf8", snap.theta || (parseFloat(rIncline.value) * Math.PI / 180));
+            ctx.restore();
+          } else if (activeTopicId.includes("cart") || activeTopicId.includes("pull") || activeTopicId.includes("newton")) {
+            draw3DBlock(sx - 16, sy - 16, 32, 32, color);
+          } else {
+            draw3DSphere(sx, sy, r_sphere, color);
+          }
+        } else {
+          // ── 2D Blueprint Mode Rendering ──
+          if (activeTopicId.includes("spring")) {
+            drawSpring2D(toScreenX(-8), toScreenY(0), sx, sy);
+            draw2DBlock(sx - 16, sy - 16, 32, 32, "#38bdf8");
+          } else if (activeTopicId.includes("incline") || activeTopicId.includes("repose")) {
+            const rotAng = e.inclineAngle || (snap.currentInc !== undefined ? snap.currentInc : parseFloat(rIncline.value) * Math.PI / 180);
+            ctx.save();
+            ctx.translate(sx, sy);
+            ctx.rotate(-rotAng);
+            draw2DBlock(-12, -24, 24, 24, "#f59e0b");
+            ctx.restore();
+          } else if (activeTopicId.includes("banking")) {
+            const heading = Math.atan2(e.vy, e.vx);
+            ctx.save();
+            ctx.translate(sx, sy);
+            ctx.rotate(heading);
+            draw2DCarChassis(0, 0, 30, 14, "#38bdf8");
+            ctx.restore();
+          } else if (activeTopicId.includes("cart") || activeTopicId.includes("pull")) {
+            draw2DCart(sx - 16, sy - 14, 32, 28, color);
+          } else {
+            draw2DSphere(sx, sy, r_sphere, color);
+          }
+
+          // 2D Axis Projections & Coordinate Badges
+          draw2DCoordinateProjections(e, sx, sy);
+        }
+
+        // Entity Label Badge
+        ctx.fillStyle = color;
+        ctx.font = "10px Plus Jakarta Sans, sans-serif";
+        ctx.fillText(e.name, sx - 15, sy - (r_sphere + 6));
+
+        // Vectors
+        if (document.getElementById("chkVel").checked && (Math.abs(e.vx) > 0.1 || Math.abs(e.vy) > 0.1)) {
+          drawVector(sx, sy, e.vx * 1.5, -e.vy * 1.5, "#a855f7", "v");
+        }
+        if (document.getElementById("chkComp").checked) {
+          if (Math.abs(e.vx) > 0.1) drawVector(sx, sy, e.vx * 1.5, 0, "#38bdf8", "v_x");
+          if (Math.abs(e.vy) > 0.1) drawVector(sx, sy, 0, -e.vy * 1.5, "#10b981", "v_y");
+        }
+        if (document.getElementById("chkForce").checked) {
+          if (activeTopicId.includes("banking")) {
+            const incRad = snap.theta || parseFloat(rIncline.value) * Math.PI / 180;
+            const cx = toScreenX(0), cy = toScreenY(0);
+            const dx = cx - sx, dy = cy - sy;
+            const dist = Math.hypot(dx, dy);
+            if (dist > 1) {
+              const nx = dx / dist, ny = dy / dist;
+              // 1. Centripetal Force Vector towards center
+              drawVector(sx, sy, nx * 38, ny * 38, "#f59e0b", "F_c (m·v²/R)");
+              // 2. Normal Reaction Vector (tilted by bank angle)
+              drawVector(sx, sy, nx * Math.sin(incRad) * 42, -Math.cos(incRad) * 42, "#10b981", "N");
+              // 3. Gravity Vector (straight down)
+              drawVector(sx, sy, 0, 35, "#ef4444", "mg");
+              // 4. Lateral Friction Vector
+              if (activeTopicId === "banking_with_friction" && snap.v_opt) {
+                const diff = (snap.speed || parseFloat(rV0.value)) - snap.v_opt;
+                if (Math.abs(diff) > 0.3) {
+                  const fSign = diff > 0 ? 1 : -1;
+                  drawVector(sx, sy, nx * fSign * 28, -ny * fSign * 10, "#a855f7", diff > 0 ? "f_s (down bank)" : "f_s (up bank)");
+                }
+              }
+            }
+          } else if (Math.abs(e.ax) > 0.1 || Math.abs(e.ay) > 0.1) {
+            drawVector(sx, sy, e.ax * 1.5, -e.ay * 1.5, "#f59e0b", "F_net");
+          }
+        }
+      });
+
+      // Update Live Telemetry
+      const primary = Object.values(entities)[0];
+      if (primary) {
+        document.getElementById("liveSpeed").textContent = `${primary.speed.toFixed(2)} m/s`;
+        document.getElementById("liveVx").textContent = `v_x = ${primary.vx.toFixed(2)} m/s`;
+        document.getElementById("liveVy").textContent = `v_y = ${primary.vy.toFixed(2)} m/s`;
+
+        const ke = primary.ke;
+        const pe = Math.max(0, parseFloat(rMass.value) * g * Math.max(0, primary.y));
+        const tot = ke + pe;
+
+        document.getElementById("textKE").textContent = `${ke.toFixed(1)} J`;
+        document.getElementById("textPE").textContent = `${pe.toFixed(1)} J`;
+
+        if (tot > 0) {
+          document.getElementById("barKE").style.width = `${(ke / tot * 100).toFixed(1)}%`;
+          document.getElementById("barPE").style.width = `${(pe / tot * 100).toFixed(1)}%`;
+        }
+      }
+
+      document.getElementById("timeReadout").textContent = `${snap.t.toFixed(2)}s`;
+      document.getElementById("scrubber").value = (frameIdx / (simSnapshots.length - 1)) * 100;
+    }
+
+    // ── 3D Helpers ────────────────────────────────────────────────────
+    function draw3DSphere(cx, cy, r, baseColor) {
+      const gy = toScreenY(0);
+      if (cy <= gy) {
+        ctx.beginPath();
+        ctx.ellipse(cx, gy + 3, r * 1.2, r * 0.35, 0, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
+        ctx.fill();
+      }
+
+      const grad = ctx.createRadialGradient(cx - r * 0.35, cy - r * 0.35, r * 0.08, cx, cy, r);
+      grad.addColorStop(0, "#ffffff");
+      grad.addColorStop(0.3, baseColor);
+      grad.addColorStop(0.85, "#0b1222");
+      grad.addColorStop(1, "#000000");
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.4)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    function draw3DBlock(x, y, w, h, baseColor) {
+      ctx.fillStyle = baseColor;
+      ctx.fillRect(x, y, w, h);
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(x, y, w, h);
+
+      const depth = 8;
+      ctx.fillStyle = "rgba(255, 255, 255, 0.25)";
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + depth, y - depth);
+      ctx.lineTo(x + w + depth, y - depth);
+      ctx.lineTo(x + w, y);
+      ctx.closePath();
+      ctx.fill(); ctx.stroke();
+
+      ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
+      ctx.beginPath();
+      ctx.moveTo(x + w, y);
+      ctx.lineTo(x + w + depth, y - depth);
+      ctx.lineTo(x + w + depth, y + h - depth);
+      ctx.lineTo(x + w, y + h);
+      ctx.closePath();
+      ctx.fill(); ctx.stroke();
+    }
+
+    function draw3DCoordinateGrid(w, h) {
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.04)";
+      ctx.lineWidth = 1;
+
+      const step = 20 * camera.scale;
+      const startX = camera.offsetX % step;
+      const startY = camera.offsetY % step;
+
+      for (let x = startX; x < w; x += step) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+      for (let y = startY; y < h; y += step) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+
+      const gy = toScreenY(0);
+      if (gy >= 0 && gy <= h) {
+        const gGrad = ctx.createLinearGradient(0, gy, 0, h);
+        gGrad.addColorStop(0, "rgba(56, 189, 248, 0.08)");
+        gGrad.addColorStop(1, "rgba(3, 7, 18, 0.8)");
+        ctx.fillStyle = gGrad;
+        ctx.fillRect(0, gy, w, h - gy);
+
+        ctx.strokeStyle = "rgba(56, 189, 248, 0.4)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, gy);
+        ctx.lineTo(w, gy);
+        ctx.stroke();
+      }
+    }
+
+    function draw3DEnvironmentGeometry(snap) {
+      if (activeTopicId.includes("incline") || activeTopicId.includes("repose")) {
+        const incRad = (activeTopicId === "angle_of_repose" && snap.currentInc !== undefined) ? snap.currentInc : parseFloat(rIncline.value) * Math.PI / 180;
+        const rampLen = 22.0;
+        const topX = toScreenX(0);
+        const topY = toScreenY(rampLen * Math.sin(incRad));
+        const botX = toScreenX(rampLen * Math.cos(incRad));
+        const botY = toScreenY(0);
+        const origX = toScreenX(0);
+        const origY = toScreenY(0);
+        const depth = 20;
+
+        // Front Face
+        ctx.beginPath();
+        ctx.moveTo(origX, origY);
+        ctx.lineTo(botX, botY);
+        ctx.lineTo(topX, topY);
+        ctx.closePath();
+        ctx.fillStyle = "rgba(245, 158, 11, 0.25)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(245, 158, 11, 0.8)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // 3D Top Slope Extrusion
+        ctx.fillStyle = "rgba(245, 158, 11, 0.4)";
+        ctx.beginPath();
+        ctx.moveTo(topX, topY);
+        ctx.lineTo(topX + depth, topY - depth * 0.5);
+        ctx.lineTo(botX + depth, botY - depth * 0.5);
+        ctx.lineTo(botX, botY);
+        ctx.closePath();
+        ctx.fill(); ctx.stroke();
+
+        // Protractor Arc Indicator
+        const arcR = Math.min(45, rampLen * camera.scale * 0.3);
+        ctx.beginPath();
+        ctx.arc(botX, botY, arcR, Math.PI, Math.PI + incRad);
+        ctx.strokeStyle = "#f59e0b";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.fillStyle = "#f59e0b";
+        ctx.font = "11px JetBrains Mono";
+        ctx.fillText(`θ = ${(incRad * 180 / Math.PI).toFixed(1)}°`, botX - arcR - 45, botY - 8);
+
+        if (activeTopicId === "angle_of_repose") {
+          const theta_rep_deg = (snap.theta_repose * 180 / Math.PI).toFixed(1);
+          ctx.fillStyle = snap.hasSlipped ? "#ef4444" : "#10b981";
+          ctx.font = "12px Plus Jakarta Sans, sans-serif";
+          ctx.fillText(
+            snap.hasSlipped ? `🚨 SLIPPING! (θ > θ_repose = ${theta_rep_deg}°)` : `🔒 STATIC HOLD (θ ≤ θ_repose = ${theta_rep_deg}°)`,
+            origX, topY - 14
+          );
+        }
+
+      } else if (activeTopicId.includes("banking")) {
+        const cx = toScreenX(0);
+        const cy = toScreenY(0);
+        const R_m = snap.R || parseFloat(rRadius.value);
+        const R_px = R_m * camera.scale;
+        const incRad = snap.theta || parseFloat(rIncline.value) * Math.PI / 180;
+        const trackW = 28;
+
+        // Center Pivot Post
+        ctx.beginPath();
+        ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+        ctx.fillStyle = "#38bdf8";
+        ctx.fill();
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.fillStyle = "#38bdf8";
+        ctx.font = "10px JetBrains Mono";
+        ctx.fillText(`Center (R = ${R_m.toFixed(1)}m)`, cx - 35, cy + 18);
+
+        // 3D Banked Track Ribbon (Inner track & Outer elevated track)
+        ctx.beginPath();
+        ctx.arc(cx, cy, R_px + trackW / 2, 0, Math.PI * 2);
+        ctx.arc(cx, cy, Math.max(10, R_px - trackW / 2), 0, Math.PI * 2, true);
+        ctx.fillStyle = "rgba(30, 41, 59, 0.75)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(245, 158, 11, 0.7)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Dashed Centerline of Lane
+        ctx.beginPath();
+        ctx.arc(cx, cy, R_px, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([8, 8]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Outer Elevated Banking Kerb (Red curb markings)
+        ctx.beginPath();
+        ctx.arc(cx, cy, R_px + trackW / 2, 0, Math.PI * 2);
+        ctx.strokeStyle = "#f43f5e";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Banking Angle & Speed Envelope HUD
+        const v_opt = snap.v_opt || Math.sqrt(R_m * g * Math.tan(incRad));
+        const v_max = snap.v_max;
+        const v_min = snap.v_min;
+        const currV = snap.speed || parseFloat(rV0.value);
+
+        const hudX = Math.max(10, cx - 180);
+        const hudY = Math.max(10, cy - R_px - 65);
+        ctx.fillStyle = "rgba(15, 23, 42, 0.92)";
+        ctx.strokeStyle = "rgba(56, 189, 248, 0.5)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect(hudX, hudY, 360, 52, 6);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 11px Plus Jakarta Sans, sans-serif";
+        ctx.fillText(`🏎️ BANKED ROAD PHYSICS (θ = ${(incRad * 180 / Math.PI).toFixed(1)}°, R = ${R_m.toFixed(1)}m)`, hudX + 12, hudY + 16);
+
+        ctx.font = "10px JetBrains Mono";
+        ctx.fillStyle = "#38bdf8";
+        const v_max_str = (v_max && v_max < 150) ? `${v_max.toFixed(1)} m/s` : "∞";
+        const v_min_str = (v_min && v_min > 0) ? `${v_min.toFixed(1)} m/s` : "0.0 m/s";
+        ctx.fillText(`v_opt: ${v_opt.toFixed(1)} m/s | v_min: ${v_min_str} | v_max: ${v_max_str} | current: ${currV.toFixed(1)} m/s`, hudX + 12, hudY + 32);
+
+        // Status Indicator
+        ctx.font = "bold 11px Plus Jakarta Sans, sans-serif";
+        if (activeTopicId === "banking_no_friction") {
+          const diff = currV - v_opt;
+          if (Math.abs(diff) < 0.2) {
+            ctx.fillStyle = "#10b981";
+            ctx.fillText("⚡ PERFECT BALANCE: N·sin θ = m·v²/R (No friction required)", hudX + 12, hudY + 46);
+          } else if (diff > 0) {
+            ctx.fillStyle = "#f43f5e";
+            ctx.fillText("⚠️ OVERSPEED: Tends to drift outward! Needs friction or steeper bank.", hudX + 12, hudY + 46);
+          } else {
+            ctx.fillStyle = "#f59e0b";
+            ctx.fillText("⚠️ UNDERSPEED: Tends to slide inward! Gravity pulls down bank.", hudX + 12, hudY + 46);
+          }
+        } else {
+          if (v_max && currV > v_max) {
+            ctx.fillStyle = "#f43f5e";
+            ctx.fillText("🚨 SKID DANGER! (v > v_max: Car skids outward off road)", hudX + 12, hudY + 46);
+          } else if (v_min && currV < v_min) {
+            ctx.fillStyle = "#f43f5e";
+            ctx.fillText("🚨 SLIP DANGER! (v < v_min: Car slides inward down slope)", hudX + 12, hudY + 46);
+          } else if (Math.abs(currV - v_opt) < 0.3) {
+            ctx.fillStyle = "#10b981";
+            ctx.fillText("⚡ OPTIMUM DESIGN SPEED (f = 0: Zero tyre wear)", hudX + 12, hudY + 46);
+          } else {
+            ctx.fillStyle = "#38bdf8";
+            const fDir = currV > v_opt ? "down slope" : "up slope";
+            ctx.fillText(`🟢 SAFE GRIP (f_s acts ${fDir} to maintain turn)`, hudX + 12, hudY + 46);
+          }
+        }
+
+      } else if (activeTopicId.includes("vertical_circle")) {
+        const cx = toScreenX(0);
+        const cy = toScreenY(0);
+        const r_px = parseFloat(rRadius.value) * camera.scale;
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, r_px, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(56, 189, 248, 0.4)";
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+      } else if (activeTopicId === "impulse_momentum" || activeTopicId === "wall_collision") {
+        const wallX = toScreenX(12.0);
+        const topY = toScreenY(15);
+        const botY = toScreenY(0);
+
+        ctx.fillStyle = snap.wall_hit ? "rgba(244, 63, 94, 0.7)" : "rgba(244, 63, 94, 0.25)";
+        ctx.fillRect(wallX, topY, 18, botY - topY);
+        ctx.strokeStyle = "#f43f5e";
+        ctx.lineWidth = snap.wall_hit ? 3 : 2;
+        ctx.strokeRect(wallX, topY, 18, botY - topY);
+
+        ctx.fillStyle = "#f43f5e";
+        ctx.font = "10px JetBrains Mono";
+        ctx.fillText("FORCE SENSOR WALL", wallX - 25, topY - 8);
+
+      } else if (activeTopicId === "projectile_complementary") {
+        const angleA = (parseFloat(rAngle.value) === 45) ? 30 : parseFloat(rAngle.value);
+        const R_target = (parseFloat(rV0.value) ** 2 * Math.sin(2 * (angleA * Math.PI / 180))) / g;
+        const flagX = toScreenX(R_target);
+        const flagY = toScreenY(0);
+
+        ctx.strokeStyle = "#10b981";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(flagX, flagY);
+        ctx.lineTo(flagX, flagY - 35);
+        ctx.stroke();
+
+        ctx.fillStyle = "#10b981";
+        ctx.beginPath();
+        ctx.moveTo(flagX, flagY - 35);
+        ctx.lineTo(flagX + 18, flagY - 27);
+        ctx.lineTo(flagX, flagY - 19);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = "#10b981";
+        ctx.font = "10px JetBrains Mono";
+        ctx.fillText(`Target R = ${R_target.toFixed(1)}m`, flagX - 35, flagY - 42);
+      }
+    }
+
+    function drawCoiledSpring3D(x1, y1, x2, y2) {
+      const dx = x2 - x1, dy = y2 - y1;
+      const dist = Math.hypot(dx, dy);
+      const coils = 14, width = 12;
+
+      ctx.save();
+      ctx.translate(x1, y1);
+      ctx.rotate(Math.atan2(dy, dx));
+
+      for (let i = 0; i < coils; i++) {
+        const cx1 = (i / coils) * dist;
+        const cx2 = ((i + 1) / coils) * dist;
+        
+        ctx.beginPath();
+        ctx.moveTo(cx1, 0);
+        ctx.quadraticCurveTo((cx1 + cx2)/2, -width, cx2, 0);
+        ctx.strokeStyle = "#94a3b8";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(cx1, 0);
+        ctx.quadraticCurveTo((cx1 + cx2)/2, width, cx2, 0);
+        ctx.strokeStyle = "#475569";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // ── 2D Blueprint Helpers ──────────────────────────────────────────
+    function draw2DBlueprintGrid(w, h) {
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.08)";
+      ctx.lineWidth = 1;
+
+      const step = 20 * camera.scale;
+      const startX = camera.offsetX % step;
+      const startY = camera.offsetY % step;
+
+      for (let x = startX; x < w; x += step) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+      for (let y = startY; y < h; y += step) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+
+      const gy = toScreenY(0);
+      const gx0 = toScreenX(0);
+
+      if (gy >= 0 && gy <= h) {
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.4)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, gy);
+        ctx.lineTo(w, gy);
+        ctx.stroke();
+
+        ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+        ctx.font = "10px JetBrains Mono, monospace";
+        for (let x = 0; x < 500; x += 10) {
+          const sx = toScreenX(x);
+          if (sx >= 0 && sx <= w) {
+            ctx.beginPath();
+            ctx.moveTo(sx, gy);
+            ctx.lineTo(sx, gy + 5);
+            ctx.stroke();
+            if (x % 20 === 0) ctx.fillText(`${x}m`, sx - 8, gy + 16);
+          }
+        }
+      }
+
+      if (gx0 >= 0 && gx0 <= w) {
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(gx0, 0);
+        ctx.lineTo(gx0, h);
+        ctx.stroke();
+      }
+    }
+
+    function draw2DSphere(cx, cy, r, baseColor) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fillStyle = baseColor;
+      ctx.fill();
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, 2, 0, Math.PI * 2);
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+    }
+
+    function draw3DCarChassis(cx, cy, w, h, color, bankAngle) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.roundRect(cx - w/2, cy - h/2, w, h, 4);
+      ctx.fill();
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Windshield & Roof
+      ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
+      ctx.fillRect(cx - w*0.2, cy - h*0.35, w*0.4, h*0.7);
+
+      // Headlights (facing forward +x in local car space)
+      ctx.fillStyle = "#fef08a";
+      ctx.fillRect(cx + w/2 - 3, cy - h*0.4, 3, 3);
+      ctx.fillRect(cx + w/2 - 3, cy + h*0.4 - 3, 3, 3);
+
+      // Taillights
+      ctx.fillStyle = "#f43f5e";
+      ctx.fillRect(cx - w/2, cy - h*0.4, 2, 3);
+      ctx.fillRect(cx - w/2, cy + h*0.4 - 3, 2, 3);
+
+      // Wheels
+      ctx.fillStyle = "#0f172a";
+      ctx.fillRect(cx - w*0.35, cy - h/2 - 3, 8, 4);
+      ctx.fillRect(cx + w*0.2, cy - h/2 - 3, 8, 4);
+      ctx.fillRect(cx - w*0.35, cy + h/2 - 1, 8, 4);
+      ctx.fillRect(cx + w*0.2, cy + h/2 - 1, 8, 4);
+    }
+
+    function draw2DCarChassis(cx, cy, w, h, color) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.roundRect(cx - w/2, cy - h/2, w, h, 3);
+      ctx.fill();
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.fillStyle = "#0f172a";
+      ctx.fillRect(cx - w*0.2, cy - h*0.3, w*0.4, h*0.6);
+    }
+
+    function draw2DBlock(x, y, w, h, baseColor) {
+      ctx.fillStyle = baseColor;
+      ctx.fillRect(x, y, w, h);
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x, y, w, h);
+
+      ctx.beginPath();
+      ctx.arc(x + w / 2, y + h / 2, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+    }
+
+    function draw2DCart(x, y, w, h, baseColor) {
+      ctx.fillStyle = baseColor;
+      ctx.fillRect(x, y, w, h);
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x, y, w, h);
+
+      const r_wh = 4;
+      ctx.fillStyle = "#94a3b8";
+      ctx.beginPath(); ctx.arc(x + 6, y + h + r_wh, r_wh, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(x + w - 6, y + h + r_wh, r_wh, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    }
+
+    function drawSpring2D(x1, y1, x2, y2) {
+      const dx = x2 - x1, dy = y2 - y1;
+      const dist = Math.hypot(dx, dy);
+      const coils = 12, width = 10;
+
+      ctx.save();
+      ctx.translate(x1, y1);
+      ctx.rotate(Math.atan2(dy, dx));
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      for (let i = 0; i <= coils; i++) {
+        const cx = (i / coils) * dist;
+        const cy = (i % 2 === 0 ? -width : width);
+        ctx.lineTo(cx, cy);
+      }
+      ctx.lineTo(dist, 0);
+      ctx.strokeStyle = "#38bdf8";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function draw2DEnvironmentGeometry(snap) {
+      if (activeTopicId.includes("incline") || activeTopicId.includes("repose")) {
+        const incRad = (activeTopicId === "angle_of_repose" && snap.currentInc !== undefined) ? snap.currentInc : parseFloat(rIncline.value) * Math.PI / 180;
+        const rampLen = 22.0;
+        const topX = toScreenX(0);
+        const topY = toScreenY(rampLen * Math.sin(incRad));
+        const botX = toScreenX(rampLen * Math.cos(incRad));
+        const botY = toScreenY(0);
+        const origX = toScreenX(0);
+        const origY = toScreenY(0);
+
+        ctx.beginPath();
+        ctx.moveTo(origX, origY);
+        ctx.lineTo(botX, botY);
+        ctx.lineTo(topX, topY);
+        ctx.closePath();
+        ctx.fillStyle = "rgba(245, 158, 11, 0.12)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(245, 158, 11, 0.8)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // 2D Angle Arc indicator
+        const arcR = Math.min(45, rampLen * camera.scale * 0.3);
+        ctx.beginPath();
+        ctx.arc(botX, botY, arcR, Math.PI, Math.PI + incRad);
+        ctx.strokeStyle = "#f59e0b";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.fillStyle = "#f59e0b";
+        ctx.font = "11px JetBrains Mono";
+        ctx.fillText(`θ = ${(incRad * 180 / Math.PI).toFixed(1)}°`, botX - arcR - 45, botY - 8);
+
+        if (activeTopicId === "angle_of_repose") {
+          const theta_rep_deg = (snap.theta_repose * 180 / Math.PI).toFixed(1);
+          ctx.fillStyle = snap.hasSlipped ? "#ef4444" : "#10b981";
+          ctx.font = "12px Plus Jakarta Sans, sans-serif";
+          ctx.fillText(
+            snap.hasSlipped ? `🚨 SLIPPING! (θ > θ_repose = ${theta_rep_deg}°)` : `🔒 STATIC HOLD (θ ≤ θ_repose = ${theta_rep_deg}°)`,
+            origX, topY - 14
+          );
+        }
+
+      } else if (activeTopicId.includes("banking")) {
+        const cx = toScreenX(0);
+        const cy = toScreenY(0);
+        const R_m = snap.R || parseFloat(rRadius.value);
+        const R_px = R_m * camera.scale;
+        const incRad = snap.theta || parseFloat(rIncline.value) * Math.PI / 180;
+
+        // Blueprint Track Circle
+        ctx.beginPath();
+        ctx.arc(cx, cy, R_px, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(56, 189, 248, 0.7)";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 6]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Center Axis
+        ctx.beginPath();
+        ctx.arc(cx, cy, 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = "#38bdf8";
+        ctx.fill();
+
+        // 2D Incline Cross-Section Diagram in Top Left
+        const csX = 30, csY = 110, csW = 120, csH = csW * Math.tan(incRad);
+        ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+        ctx.fillRect(csX - 10, csY - csH - 25, csW + 40, csH + 45);
+        ctx.strokeStyle = "rgba(56, 189, 248, 0.4)";
+        ctx.strokeRect(csX - 10, csY - csH - 25, csW + 40, csH + 45);
+
+        ctx.beginPath();
+        ctx.moveTo(csX, csY);
+        ctx.lineTo(csX + csW, csY);
+        ctx.lineTo(csX + csW, csY - csH);
+        ctx.closePath();
+        ctx.fillStyle = "rgba(245, 158, 11, 0.2)";
+        ctx.fill();
+        ctx.strokeStyle = "#f59e0b";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "10px JetBrains Mono";
+        ctx.fillText(`Road Bank Angle θ = ${(incRad * 180 / Math.PI).toFixed(1)}°`, csX, csY - csH - 10);
+        ctx.fillText(`h = ${(csW * Math.tan(incRad) / 10).toFixed(1)}m elevation`, csX + csW - 35, csY - csH/2);
+
+      } else if (activeTopicId === "centripetal_force") {
+        const cx = toScreenX(0);
+        const cy = toScreenY(0);
+        const r_px = parseFloat(rRadius.value) * camera.scale;
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, r_px, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(56, 189, 248, 0.6)";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+        ctx.fillStyle = "#38bdf8";
+        ctx.fill();
+        ctx.fillStyle = "#38bdf8";
+        ctx.font = "10px JetBrains Mono";
+        ctx.fillText(`Pivot Center`, cx - 30, cy + 16);
+
+      } else if (activeTopicId === "impulse_momentum" || activeTopicId === "wall_collision") {
+        const wallX = toScreenX(12.0);
+        const topY = toScreenY(15);
+        const botY = toScreenY(0);
+
+        ctx.strokeStyle = "#f43f5e";
+        ctx.lineWidth = snap.wall_hit ? 3 : 2;
+        ctx.beginPath();
+        ctx.moveTo(wallX, topY);
+        ctx.lineTo(wallX, botY);
+        ctx.stroke();
+
+        for (let y = topY; y < botY; y += 8) {
+          ctx.beginPath();
+          ctx.moveTo(wallX, y);
+          ctx.lineTo(wallX + 6, y + 6);
+          ctx.stroke();
+        }
+      } else if (activeTopicId === "projectile_complementary") {
+        const angleA = (parseFloat(rAngle.value) === 45) ? 30 : parseFloat(rAngle.value);
+        const R_target = (parseFloat(rV0.value) ** 2 * Math.sin(2 * (angleA * Math.PI / 180))) / g;
+        const flagX = toScreenX(R_target);
+        const flagY = toScreenY(0);
+
+        ctx.strokeStyle = "#10b981";
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(flagX, flagY); ctx.lineTo(flagX, flagY - 30); ctx.stroke();
+        ctx.fillStyle = "#10b981";
+        ctx.fillText(`Target (${R_target.toFixed(1)}m)`, flagX - 30, flagY - 35);
+      }
+    }
+
+    function draw2DCoordinateProjections(e, sx, sy) {
+      const gy = toScreenY(0);
+      const gx0 = toScreenX(0);
+
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 3]);
+
+      ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx, gy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(gx0, sy); ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = "rgba(56, 189, 248, 0.8)";
+      ctx.font = "9.5px JetBrains Mono, monospace";
+      ctx.fillText(`(${e.x.toFixed(1)}m, ${e.y.toFixed(1)}m)`, sx + 10, sy - 10);
+    }
+
+    function drawTrajectoryTrails() {
+      if (!simSnapshots || simSnapshots.length === 0) return;
+      const entityEntries = Object.entries(simSnapshots[0].entities);
+
+      entityEntries.forEach(([name, _], eIdx) => {
+        ctx.beginPath();
+        ctx.strokeStyle = eIdx === 0 ? "rgba(56, 189, 248, 0.6)" : "rgba(168, 85, 247, 0.6)";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 4]);
+
+        const maxIdx = Math.min(Math.floor(currentFrame), simSnapshots.length - 1);
+        for (let i = 0; i <= maxIdx; i++) {
+          const e = simSnapshots[i].entities[name];
+          if (e) {
+            const sx = toScreenX(e.x);
+            const sy = toScreenY(e.y);
+            if (i === 0) ctx.moveTo(sx, sy);
+            else ctx.lineTo(sx, sy);
+          }
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+      });
+    }
+
+    function drawVector(x, y, vx, vy, color, label) {
+      if (Math.hypot(vx, vy) < 2) return;
+      const endX = x + vx * 1.5;
+      const endY = y + vy * 1.5;
+
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(endX, endY);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      const angle = Math.atan2(vy, vx);
+      ctx.beginPath();
+      ctx.moveTo(endX, endY);
+      ctx.lineTo(endX - 7 * Math.cos(angle - Math.PI / 6), endY - 7 * Math.sin(angle - Math.PI / 6));
+      ctx.lineTo(endX - 7 * Math.cos(angle + Math.PI / 6), endY - 7 * Math.sin(angle + Math.PI / 6));
+      ctx.fillStyle = color;
+      ctx.fill();
+
+      if (label) {
+        ctx.fillStyle = color;
+        ctx.font = "10px JetBrains Mono, monospace";
+        ctx.fillText(label, endX + 4, endY - 4);
+      }
+    }
+
+    // ── Animation Loop ────────────────────────────────────────────────
+    let lastTime = performance.now();
+    function animateLoop(now) {
+      const dt = Math.min((now - lastTime) / 1000, 0.1);
+      lastTime = now;
+
+      if (isPlaying && simSnapshots.length > 0) {
+        const fps = simSnapshots.length / simDuration;
+        currentFrame += fps * dt * playSpeed;
+        if (currentFrame >= simSnapshots.length) {
+          currentFrame = simSnapshots.length - 1;
+          isPlaying = false;
+          document.getElementById("btnPlay").textContent = "▶";
+        }
+      }
+
+      drawScene();
+      if (document.getElementById("bodyTabGraphs").style.display !== "none") {
+        drawMiniCharts();
+      }
+      requestAnimationFrame(animateLoop);
+    }
+    requestAnimationFrame(animateLoop);
+
+    function drawMiniCharts() {
+      if (!simSnapshots || simSnapshots.length === 0) return;
+      const firstEntityName = Object.keys(simSnapshots[0].entities)[0];
+
+      // 1. Chart 1
+      const cY = document.getElementById("chartHeight");
+      const ctxY = cY.getContext("2d");
+      cY.width = cY.clientWidth * window.devicePixelRatio;
+      cY.height = cY.clientHeight * window.devicePixelRatio;
+      ctxY.clearRect(0, 0, cY.width, cY.height);
+
+      let maxY = -Infinity, minY = Infinity;
+      simSnapshots.forEach(s => {
+        const y = s.entities[firstEntityName].y || s.entities[firstEntityName].x;
+        if (y > maxY) maxY = y;
+        if (y < minY) minY = y;
+      });
+      maxY = Math.max(maxY, 1);
+      minY = Math.min(minY, 0);
+
+      ctxY.beginPath();
+      ctxY.strokeStyle = "#38bdf8";
+      ctxY.lineWidth = 2 * window.devicePixelRatio;
+      simSnapshots.forEach((s, idx) => {
+        const val = s.entities[firstEntityName].y || s.entities[firstEntityName].x;
+        const px = (idx / (simSnapshots.length - 1)) * cY.width;
+        const py = cY.height - ((val - minY) / (maxY - minY || 1)) * (cY.height - 14) - 7;
+        if (idx === 0) ctxY.moveTo(px, py); else ctxY.lineTo(px, py);
+      });
+      ctxY.stroke();
+
+      // Current Scrubber Dot
+      const frameIdx = Math.max(0, Math.min(Math.floor(currentFrame), simSnapshots.length - 1));
+      const curX = (frameIdx / (simSnapshots.length - 1)) * cY.width;
+      ctxY.fillStyle = "#fff";
+      ctxY.beginPath();
+      ctxY.arc(curX, cY.height / 2, 4 * window.devicePixelRatio, 0, Math.PI * 2);
+      ctxY.fill();
+
+      // 2. Chart 2
+      const cV = document.getElementById("chartVelocity");
+      const ctxV = cV.getContext("2d");
+      cV.width = cV.clientWidth * window.devicePixelRatio;
+      cV.height = cV.clientHeight * window.devicePixelRatio;
+      ctxV.clearRect(0, 0, cV.width, cV.height);
+
+      let maxV = -Infinity, minV = Infinity;
+      simSnapshots.forEach(s => {
+        const vy = s.entities[firstEntityName].vy || s.entities[firstEntityName].speed;
+        if (vy > maxV) maxV = vy;
+        if (vy < minV) minV = vy;
+      });
+
+      ctxV.beginPath();
+      ctxV.strokeStyle = "#10b981";
+      ctxV.lineWidth = 2 * window.devicePixelRatio;
+      simSnapshots.forEach((s, idx) => {
+        const val = s.entities[firstEntityName].vy || s.entities[firstEntityName].speed;
+        const px = (idx / (simSnapshots.length - 1)) * cV.width;
+        const py = cV.height - ((val - minV) / (maxV - minV || 1)) * (cV.height - 14) - 7;
+        if (idx === 0) ctxV.moveTo(px, py); else ctxV.lineTo(px, py);
+      });
+      ctxV.stroke();
+    }
+
+    // Playback Buttons
+    document.getElementById("btnPlay").addEventListener("click", () => {
+      isPlaying = !isPlaying;
+      document.getElementById("btnPlay").textContent = isPlaying ? "⏸" : "▶";
+      if (isPlaying && currentFrame >= simSnapshots.length - 1) {
+        currentFrame = 0;
+      }
+    });
+
+    document.getElementById("btnReset").addEventListener("click", () => {
+      isPlaying = false;
+      document.getElementById("btnPlay").textContent = "▶";
+      currentFrame = 0;
+    });
+
+    document.getElementById("btnApex").addEventListener("click", () => {
+      if (!simSnapshots || simSnapshots.length === 0) return;
+      let minVyIdx = 0, minVy = Infinity;
+      const name = Object.keys(simSnapshots[0].entities)[0];
+
+      simSnapshots.forEach((s, idx) => {
+        const vy = Math.abs(s.entities[name].vy);
+        if (vy < minVy) { minVy = vy; minVyIdx = idx; }
+      });
+      isPlaying = false;
+      document.getElementById("btnPlay").textContent = "▶";
+      currentFrame = minVyIdx;
+    });
+
+    document.getElementById("scrubber").addEventListener("input", (e) => {
+      if (simSnapshots.length > 0) {
+        const pct = parseFloat(e.target.value) / 100;
+        currentFrame = Math.floor(pct * (simSnapshots.length - 1));
+      }
+    });
+
+    document.getElementById("speedDropdown").addEventListener("change", (e) => {
+      playSpeed = parseFloat(e.target.value);
+    });
+
+    // Right Tabs
+    document.getElementById("btnTabMath").addEventListener("click", () => {
+      document.getElementById("btnTabMath").classList.add("active");
+      document.getElementById("btnTabGraphs").classList.remove("active");
+      document.getElementById("btnTabConcepts").classList.remove("active");
+      document.getElementById("bodyTabMath").style.display = "flex";
+      document.getElementById("bodyTabGraphs").style.display = "none";
+      document.getElementById("bodyTabConcepts").style.display = "none";
+    });
+    document.getElementById("btnTabGraphs").addEventListener("click", () => {
+      document.getElementById("btnTabGraphs").classList.add("active");
+      document.getElementById("btnTabMath").classList.remove("active");
+      document.getElementById("btnTabConcepts").classList.remove("active");
+      document.getElementById("bodyTabGraphs").style.display = "flex";
+      document.getElementById("bodyTabMath").style.display = "none";
+      document.getElementById("bodyTabConcepts").style.display = "none";
+    });
+    document.getElementById("btnTabConcepts").addEventListener("click", () => {
+      document.getElementById("btnTabConcepts").classList.add("active");
+      document.getElementById("btnTabMath").classList.remove("active");
+      document.getElementById("btnTabGraphs").classList.remove("active");
+      document.getElementById("bodyTabConcepts").style.display = "flex";
+      document.getElementById("bodyTabMath").style.display = "none";
+      document.getElementById("bodyTabGraphs").style.display = "none";
+    });
+
+    document.getElementById("chkAutoFraming").addEventListener("change", (e) => {
+      document.getElementById("autoZoomIndicator").style.display = e.target.checked ? "flex" : "none";
+      if (e.target.checked) recalcAutoFraming(false);
+    });
+
+    // Initialize
+    renderPresetList();
+    selectTopic("newton_second_law");
+  </script>
+</body>
+</html>
