@@ -34,7 +34,7 @@ dependencies = [
 ]
 
 [tool.vercel]
-entrypoint = "api/index.py"
+entrypoint = "main:app"
 
 [project.optional-dependencies]
 dev = [
